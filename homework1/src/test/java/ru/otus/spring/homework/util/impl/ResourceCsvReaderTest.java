@@ -2,6 +2,7 @@ package ru.otus.spring.homework.util.impl;
 
 import org.junit.jupiter.api.Test;
 import ru.otus.spring.homework.exceptions.ResourceReaderException;
+import ru.otus.spring.homework.repository.impl.ResourceCsvReader;
 
 import java.util.List;
 

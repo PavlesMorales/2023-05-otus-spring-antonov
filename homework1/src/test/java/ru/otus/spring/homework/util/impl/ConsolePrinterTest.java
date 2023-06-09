@@ -32,7 +32,7 @@ class ConsolePrinterTest {
         String expected = "Hello\n";
         String message = "Hello";
 
-        subj.print(message);
+        subj.println(message);
 
         stream.flush();
         String actual = stream.toString();

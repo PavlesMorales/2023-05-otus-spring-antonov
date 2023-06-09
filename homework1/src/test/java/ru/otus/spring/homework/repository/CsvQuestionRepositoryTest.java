@@ -5,10 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.spring.homework.util.impl.CsvToQuestionMapper;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
-import ru.otus.spring.homework.util.ResourceReadable;
+import ru.otus.spring.homework.repository.impl.CsvToQuestionMapper;
+import ru.otus.spring.homework.repository.impl.CsvQuestionRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class QuestionRepositoryImplTest {
+class CsvQuestionRepositoryTest {
 
     @Mock
     ResourceReadable reader;
@@ -26,7 +26,7 @@ class QuestionRepositoryImplTest {
     @Mock
     CsvToQuestionMapper mapper;
     @InjectMocks
-    QuestionRepositoryImpl subj;
+    CsvQuestionRepository subj;
 
     @Test
     void findAllQuestions() {

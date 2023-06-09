@@ -34,24 +34,24 @@ class QuizTest {
         String secondPrint = "Question 1 : ";
         String thirdPrint = "5+5=";
         String fourPrint = "10" + System.lineSeparator() + "12";
-        String fifthPrint = System.lineSeparator();
+        String fifthPrint = "";
         String sixPrint = "Stop quiz";
 
         when(repository.findAllQuestions()).thenReturn(mockQuestions);
-        doNothing().when(printable).print(firstPrint);
-        doNothing().when(printable).print(secondPrint);
-        doNothing().when(printable).print(thirdPrint);
-        doNothing().when(printable).print(fourPrint);
-        doNothing().when(printable).print(fifthPrint);
-        doNothing().when(printable).print(sixPrint);
+        doNothing().when(printable).println(firstPrint);
+        doNothing().when(printable).println(secondPrint);
+        doNothing().when(printable).println(thirdPrint);
+        doNothing().when(printable).println(fourPrint);
+        doNothing().when(printable).println(fifthPrint);
+        doNothing().when(printable).println(sixPrint);
         subj.startQuiz();
 
         verify(repository, times(1)).findAllQuestions();
-        verify(printable, times(1)).print(firstPrint);
-        verify(printable, times(1)).print(secondPrint);
-        verify(printable, times(1)).print(thirdPrint);
-        verify(printable, times(1)).print(fourPrint);
-        verify(printable, times(1)).print(fifthPrint);
-        verify(printable, times(1)).print(sixPrint);
+        verify(printable, times(1)).println(firstPrint);
+        verify(printable, times(1)).println(secondPrint);
+        verify(printable, times(1)).println(thirdPrint);
+        verify(printable, times(1)).println(fourPrint);
+        verify(printable, times(1)).println(fifthPrint);
+        verify(printable, times(1)).println(sixPrint);
     }
 }

@@ -1,9 +1,9 @@
-package ru.otus.spring.homework.util.impl;
+package ru.otus.spring.homework.repository.impl;
 
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.exceptions.CsvParserException;
-import ru.otus.spring.homework.util.QuestionMapper;
+import ru.otus.spring.homework.repository.QuestionMapper;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ru.otus.spring.homework.util;
+package ru.otus.spring.homework.repository;
 
 import java.util.List;
 

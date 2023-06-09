@@ -1,7 +1,7 @@
-package ru.otus.spring.homework.util.impl;
+package ru.otus.spring.homework.repository.impl;
 
 import ru.otus.spring.homework.exceptions.ResourceReaderException;
-import ru.otus.spring.homework.util.ResourceReadable;
+import ru.otus.spring.homework.repository.ResourceReadable;
 
 import java.io.BufferedReader;
 import java.io.IOException;

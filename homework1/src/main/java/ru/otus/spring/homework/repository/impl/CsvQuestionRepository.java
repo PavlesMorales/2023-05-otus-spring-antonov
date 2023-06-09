@@ -1,18 +1,18 @@
-package ru.otus.spring.homework.repository;
+package ru.otus.spring.homework.repository.impl;
 
-import ru.otus.spring.homework.util.impl.CsvToQuestionMapper;
 import ru.otus.spring.homework.model.Question;
-import ru.otus.spring.homework.util.ResourceReadable;
+import ru.otus.spring.homework.repository.QuestionRepository;
+import ru.otus.spring.homework.repository.ResourceReadable;
 
 import java.util.List;
 
-public class QuestionRepositoryImpl implements QuestionRepository {
+public class CsvQuestionRepository implements QuestionRepository {
 
     private final ResourceReadable reader;
 
     private final CsvToQuestionMapper mapper;
 
-    public QuestionRepositoryImpl(ResourceReadable reader, CsvToQuestionMapper mapper) {
+    public CsvQuestionRepository(ResourceReadable reader, CsvToQuestionMapper mapper) {
         this.reader = reader;
         this.mapper = mapper;
     }

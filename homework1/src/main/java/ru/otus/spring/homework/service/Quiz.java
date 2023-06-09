@@ -22,23 +22,23 @@ public class Quiz {
     }
 
     public void startQuiz() {
-        printable.print("Start quiz!!");
+        printable.println("Start quiz!!");
         List<Question> currentQuestions = repository.findAllQuestions();
 
         for (int i = 0; i < currentQuestions.size(); i++) {
-            printable.print(QUIZ_TEMPLATE.formatted(i + 1));
+            printable.println(QUIZ_TEMPLATE.formatted(i + 1));
 
             var question = currentQuestions.get(i);
-            printable.print(question.question());
+            printable.println(question.question());
 
             String answersAsString = getAnswersAsString(question.answers());
 
-            printable.print(answersAsString);
+            printable.println(answersAsString);
 
-            printable.print(System.lineSeparator());
+            printable.println("");
         }
 
-        printable.print("Stop quiz");
+        printable.println("Stop quiz");
     }
 
     private String getAnswersAsString(List<Answer> answers) {
