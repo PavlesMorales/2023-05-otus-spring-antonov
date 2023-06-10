@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="csvToQuestionMapper" class="ru.otus.spring.homework.repository.impl.CsvToQuestionMapper"/>
+
+    <bean id="consolePrinter" class="ru.otus.spring.homework.util.impl.ConsolePrinter"/>
+
+    <bean id="resourceReader" class="ru.otus.spring.homework.repository.impl.ResourceCsvReader">
+        <constructor-arg index="0" value="/questions.csv"/>
+    </bean>
+
+    <bean id="questionRepository" class="ru.otus.spring.homework.repository.impl.CsvQuestionRepository">
+        <constructor-arg index="0" ref="resourceReader"/>
+        <constructor-arg index="1" ref="csvToQuestionMapper"/>
+    </bean>
+
+    <bean id="quiz" class="ru.otus.spring.homework.service.Quiz">
+        <constructor-arg index="0" ref="consolePrinter"/>
+        <constructor-arg index="1" ref="questionRepository"/>
+    </bean>
+
+</beans>
