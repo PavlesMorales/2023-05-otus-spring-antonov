@@ -1,11 +1,13 @@
 package ru.otus.spring.homework.repository.impl;
 
+import org.springframework.stereotype.Component;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.repository.QuestionRepository;
 import ru.otus.spring.homework.repository.ResourceReadable;
 
 import java.util.List;
 
+@Component
 public class CsvQuestionRepository implements QuestionRepository {
 
     private final ResourceReadable reader;

@@ -1,4 +1,4 @@
-package ru.otus.spring.homework.repository;
+package ru.otus.spring.homework.repository.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
+import ru.otus.spring.homework.repository.ResourceReadable;
 import ru.otus.spring.homework.repository.impl.CsvToQuestionMapper;
 import ru.otus.spring.homework.repository.impl.CsvQuestionRepository;
 

@@ -1,5 +1,6 @@
 package ru.otus.spring.homework.repository.impl;
 
+import org.springframework.stereotype.Component;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.exceptions.CsvParserException;
@@ -7,6 +8,7 @@ import ru.otus.spring.homework.repository.QuestionMapper;
 
 import java.util.List;
 
+@Component
 public class CsvToQuestionMapper implements QuestionMapper {
 
     @Override

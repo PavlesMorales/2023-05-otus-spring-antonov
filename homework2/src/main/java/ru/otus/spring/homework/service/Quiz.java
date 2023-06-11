@@ -1,44 +1,52 @@
 package ru.otus.spring.homework.service;
 
+import org.springframework.stereotype.Service;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
-import ru.otus.spring.homework.repository.QuestionRepository;
-import ru.otus.spring.homework.util.Printable;
+import ru.otus.spring.homework.model.QuizResult;
+import ru.otus.spring.homework.util.IOConsoleUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class Quiz {
 
     private static final String QUIZ_TEMPLATE = "Question %s : ";
 
-    private final Printable printable;
+    private final IOConsoleUtil ioConsoleUtil;
 
-    private final QuestionRepository repository;
-
-    public Quiz(Printable printable, QuestionRepository repository) {
-        this.printable = printable;
-        this.repository = repository;
+    public Quiz(IOConsoleUtil ioConsoleUtil) {
+        this.ioConsoleUtil = ioConsoleUtil;
     }
 
-    public void startQuiz() {
-        printable.println("Start quiz!!");
-        List<Question> currentQuestions = repository.findAllQuestions();
+    public List<QuizResult> startQuiz(List<Question> questions) {
+        List<QuizResult> questionWithStudentAnswer = new ArrayList<>();
 
-        for (int i = 0; i < currentQuestions.size(); i++) {
-            printable.println(QUIZ_TEMPLATE.formatted(i + 1));
+        for (int i = 0; i < questions.size(); i++) {
+            ioConsoleUtil.println(QUIZ_TEMPLATE.formatted(i + 1));
+            var question = questions.get(i);
+            ioConsoleUtil.println(question.question());
 
-            var question = currentQuestions.get(i);
-            printable.println(question.question());
+            String answersForMultipleChoice = getAnswersAsString(question.answers());
+            ioConsoleUtil.println(answersForMultipleChoice);
 
-            String answersAsString = getAnswersAsString(question.answers());
+            String studentAnswerFromConsole = ioConsoleUtil.read();
+            Answer studentAnswer = findStudentAnswer(question.answers(), studentAnswerFromConsole);
 
-            printable.println(answersAsString);
-
-            printable.println("");
+            questionWithStudentAnswer.add(new QuizResult(question.question(), studentAnswer));
         }
 
-        printable.println("Stop quiz");
+        return questionWithStudentAnswer;
+    }
+
+    private Answer findStudentAnswer(List<Answer> currentAnswers, String studentAnswer) {
+
+        return currentAnswers.stream()
+                .filter(answer -> answer.answer().equals(studentAnswer))
+                .findFirst()
+                .orElse(new Answer(false, studentAnswer));
     }
 
     private String getAnswersAsString(List<Answer> answers) {

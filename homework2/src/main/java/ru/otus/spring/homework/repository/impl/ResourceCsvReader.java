@@ -1,5 +1,7 @@
 package ru.otus.spring.homework.repository.impl;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import ru.otus.spring.homework.exceptions.ResourceReaderException;
 import ru.otus.spring.homework.repository.ResourceReadable;
 
@@ -9,10 +11,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class ResourceCsvReader implements ResourceReadable {
     private final String pathToResource;
 
-    public ResourceCsvReader(String pathToResource) {
+    public ResourceCsvReader(@Value("${path-to-questions}") String pathToResource) {
         this.pathToResource = pathToResource;
     }
 

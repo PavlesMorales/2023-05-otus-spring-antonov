@@ -7,51 +7,75 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
+import ru.otus.spring.homework.model.QuizResult;
 import ru.otus.spring.homework.repository.QuestionRepository;
+import ru.otus.spring.homework.util.IOConsoleUtil;
 import ru.otus.spring.homework.util.Printable;
+import ru.otus.spring.homework.util.Readable;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class QuizTest {
 
     @Mock
-    Printable printable;
-
-    @Mock
-    QuestionRepository repository;
+    IOConsoleUtil ioConsoleUtil;
 
     @InjectMocks
     Quiz subj;
 
-
     @Test
     void startQuiz() {
-        List<Question> mockQuestions = List.of(new Question("5+5=", List.of(new Answer(true, "10"), new Answer(false, "12"))));
-        String firstPrint = "Start quiz!!";
-        String secondPrint = "Question 1 : ";
-        String thirdPrint = "5+5=";
-        String fourPrint = "10" + System.lineSeparator() + "12";
-        String fifthPrint = "";
-        String sixPrint = "Stop quiz";
+        //given
+        List<QuizResult> expected = List.of(
+                new QuizResult("question one", new Answer(true, "rightAnswerOne")),
+                new QuizResult("question two", new Answer(true, "rightAnswerTwo")));
 
-        when(repository.findAllQuestions()).thenReturn(mockQuestions);
-        doNothing().when(printable).println(firstPrint);
-        doNothing().when(printable).println(secondPrint);
-        doNothing().when(printable).println(thirdPrint);
-        doNothing().when(printable).println(fourPrint);
-        doNothing().when(printable).println(fifthPrint);
-        doNothing().when(printable).println(sixPrint);
-        subj.startQuiz();
+        List<Question> questions = List.of(
+                new Question("question one", List.of(
+                        new Answer(false, "wrongAnswerOne"),
+                        new Answer(true, "rightAnswerOne")
+                )),
+                new Question("question two", List.of(
+                        new Answer(true, "rightAnswerTwo"),
+                        new Answer(false, "wrongAnswerTwo")
+                )));
 
-        verify(repository, times(1)).findAllQuestions();
-        verify(printable, times(1)).println(firstPrint);
-        verify(printable, times(1)).println(secondPrint);
-        verify(printable, times(1)).println(thirdPrint);
-        verify(printable, times(1)).println(fourPrint);
-        verify(printable, times(1)).println(fifthPrint);
-        verify(printable, times(1)).println(sixPrint);
+        //when
+        String questionOne = "Question 1 : ";
+        String questionTextOne = "question one";
+        String answersTextOne = """
+                wrongAnswerOne
+                rightAnswerOne""";
+        String questionTwo = "Question 2 : ";
+        String questionTextTwo = "question two";
+        String answersTextTwo = """
+                rightAnswerTwo
+                wrongAnswerTwo""";
+
+        String answerOne = "rightAnswerOne";
+        String answerTwo = "rightAnswerTwo";
+
+        when(ioConsoleUtil.read()).thenReturn(answerOne, answerTwo);
+        doNothing().when(ioConsoleUtil).println(questionOne);
+        doNothing().when(ioConsoleUtil).println(questionTextOne);
+        doNothing().when(ioConsoleUtil).println(answersTextOne);
+        doNothing().when(ioConsoleUtil).println(questionTwo);
+        doNothing().when(ioConsoleUtil).println(questionTextTwo);
+        doNothing().when(ioConsoleUtil).println(answersTextTwo);
+
+        List<QuizResult> actual = subj.startQuiz(questions);
+        //then
+        assertEquals(expected, actual);
+
+        verify(ioConsoleUtil, times(1)).println(questionOne);
+        verify(ioConsoleUtil, times(1)).println(questionTextOne);
+        verify(ioConsoleUtil, times(1)).println(answersTextOne);
+        verify(ioConsoleUtil, times(1)).println(questionTwo);
+        verify(ioConsoleUtil, times(1)).println(questionTextTwo);
+        verify(ioConsoleUtil, times(1)).println(answersTextTwo);
     }
 }
