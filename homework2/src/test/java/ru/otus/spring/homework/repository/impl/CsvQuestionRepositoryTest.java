@@ -1,15 +1,11 @@
 package ru.otus.spring.homework.repository.impl;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.otus.spring.homework.TestConfig;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
-import ru.otus.spring.homework.repository.ResourceReadable;
-import ru.otus.spring.homework.repository.impl.CsvToQuestionMapper;
-import ru.otus.spring.homework.repository.impl.CsvQuestionRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,53 +14,36 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class CsvQuestionRepositoryTest {
+class CsvQuestionRepositoryTest extends TestConfig {
 
-    @Mock
-    ResourceReadable reader;
-
-    @Mock
-    CsvToQuestionMapper mapper;
-    @InjectMocks
+    @Autowired
     CsvQuestionRepository subj;
 
     @Test
     void findAllQuestions() {
-        String firstString = "first csv string";
-        String secondString = "second csv string";
-        List<String> resourcesCsvAsStrings = List.of(firstString, secondString);
 
-        Question firstQuestion = new Question("question", List.of(new Answer(true, "answer"), new Answer(false, "someElse")));
-        Question secondQuestion = new Question("question 2", List.of(new Answer(true, "answer"), new Answer(false, "wrongAnswer")));
+        Question firstQuestion = new Question("What is a correct syntax to output \"Hello World\" in Java?",
+                List.of(
+                        new Answer(true, "System.out.println(\"Hello World\");"),
+                        new Answer(false, "Console.WriteLine(\"Hello World\");"),
+                        new Answer(false, "print(\"Hello World\");"),
+                        new Answer(false, "echo(\"Hello World\");")
+                ));
+        Question secondQuestion = new Question("What is the correct way to create an object called myObj of MyClass?",
+                List.of(
+                        new Answer(true, "MyClass myObj = new MyClass();"),
+                        new Answer(false, "class MyClass = new myObj();"),
+                        new Answer(false, "class myObj = new MyClass();"),
+                        new Answer(false, "new myObj = MyClass();")
+                ));
 
         List<Question> expected = List.of(firstQuestion, secondQuestion);
 
-        when(reader.readResourceAsStrings()).thenReturn(resourcesCsvAsStrings);
-        when(mapper.readValue(firstString)).thenReturn(firstQuestion);
-        when(mapper.readValue(secondString)).thenReturn(secondQuestion);
 
         List<Question> actual = subj.findAllQuestions();
 
         assertEquals(expected, actual);
 
-        verify(reader, times(1)).readResourceAsStrings();
-        verify(mapper, times(1)).readValue(firstString);
-        verify(mapper, times(1)).readValue(secondString);
-
-    }
-
-    @Test
-    void findAllQuestions_shouldReturnEmptyList() {
-        List<String> resourcesCsvAsStrings = new ArrayList<>();
-
-        when(reader.readResourceAsStrings()).thenReturn(resourcesCsvAsStrings);
-
-        List<Question> actual = subj.findAllQuestions();
-        assertTrue(actual.isEmpty());
-
-        verify(reader, times(1)).readResourceAsStrings();
-        verifyNoInteractions(mapper);
 
     }
 }

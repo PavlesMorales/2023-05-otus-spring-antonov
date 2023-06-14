@@ -7,4 +7,6 @@ import java.util.List;
 public interface QuestionRepository {
 
     List<Question> findAllQuestions();
+
+    List<Question> findAllQuestionsInRandomOrder();
 }

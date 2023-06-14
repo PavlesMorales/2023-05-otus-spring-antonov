@@ -7,8 +7,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import ru.otus.spring.homework.util.IOConsoleUtil;
 import ru.otus.spring.homework.util.impl.IOConsoleUtilImpl;
 
-import java.util.Scanner;
-
 @PropertySource(value = "classpath:application.yaml")
 @Configuration
 public class Config {
@@ -20,8 +18,7 @@ public class Config {
 
     @Bean
     IOConsoleUtil ioConsoleUtil() {
-        var scanner = new Scanner(System.in);
-        return new IOConsoleUtilImpl(scanner);
+        return new IOConsoleUtilImpl(System.in, System.out);
     }
 
 }

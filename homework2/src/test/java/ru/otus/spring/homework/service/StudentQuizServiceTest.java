@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.spring.homework.model.*;
 import ru.otus.spring.homework.repository.QuestionRepository;
+import ru.otus.spring.homework.repository.StudentRepository;
 import ru.otus.spring.homework.util.IOConsoleUtil;
 import ru.otus.spring.homework.util.QuestionsShuffle;
 
@@ -25,9 +26,10 @@ class StudentQuizServiceTest {
     Quiz quiz;
 
     @Mock
-    QuestionRepository repository;
+    StudentRepository studentRepository;
+
     @Mock
-    QuestionsShuffle questionsShuffle;
+    QuestionRepository repository;
 
     StudentQuizService subj;
 
@@ -35,14 +37,13 @@ class StudentQuizServiceTest {
 
     @BeforeEach
     void startUp() {
-        subj = new StudentQuizService(ioConsoleUtil, quiz, repository, questionsShuffle, minimalRightAnswers);
+        subj = new StudentQuizService(ioConsoleUtil, quiz, studentRepository, repository, minimalRightAnswers);
     }
 
     @Test
     void startStudentQuiz_shouldSuccessQuizResult() {
         //given
-        String firstName = "Ivan";
-        String lastName = "Ivanov";
+        var student = new Student("Ivan", "Ivanov");
         int countRightStudentQuestions = 2;
 
         List<Question> questions = List.of(
@@ -60,10 +61,8 @@ class StudentQuizServiceTest {
                 new QuizResult("question one", new Answer(true, "rightAnswerOne")),
                 new QuizResult("question two", new Answer(true, "rightAnswerTwo")));
 
-        String printFirstLine = "Hello, input your name...";
-        String printSecondLine = "And last name...";
-        String printThirdLine = "Okay. Now start quiz %s %s".formatted(firstName, lastName);
-        String printFourLine = """
+        String printFirstLine = "Okay. Now start quiz %s %s".formatted(student.firstName(), student.lastName());
+        String printSecondLine = """
                 Question: question one
                 answer: rightAnswerOne
                 isRight: true
@@ -73,48 +72,41 @@ class StudentQuizServiceTest {
                 isRight: true
                 """;
 
-        String printFifthLine = "Congratulation your scores : %s. minimal scores: %s"
+        String printThirdLine = "Congratulation your scores : %s. minimal scores: %s"
                 .formatted(countRightStudentQuestions, minimalRightAnswers);
 
         StudentQuizResult expected = new StudentQuizResult(
-                new Student(firstName, lastName),
+                student,
                 studentQuizResult,
                 countRightStudentQuestions,
                 minimalRightAnswers);
 
         //when
+        when(studentRepository.getStudent()).thenReturn(student);
         doNothing().when(ioConsoleUtil).println(printFirstLine);
-        when(ioConsoleUtil.read()).thenReturn(firstName, lastName);
         doNothing().when(ioConsoleUtil).println(printSecondLine);
-        when(repository.findAllQuestions()).thenReturn(questions);
-        when(questionsShuffle.shuffleQuestions(questions)).thenReturn(questions);
+        when(repository.findAllQuestionsInRandomOrder()).thenReturn(questions);
         when(quiz.startQuiz(questions)).thenReturn(studentQuizResult);
         doNothing().when(ioConsoleUtil).println(printThirdLine);
-        doNothing().when(ioConsoleUtil).println(printFourLine);
-        doNothing().when(ioConsoleUtil).println(printFifthLine);
 
         StudentQuizResult actual = subj.startStudentQuiz();
 
         //then
         assertEquals(expected, actual);
 
+        verify(studentRepository, times(1)).getStudent();
         verify(ioConsoleUtil, times(1)).println(printFirstLine);
         verify(ioConsoleUtil, times(1)).println(printSecondLine);
-        verify(ioConsoleUtil, times(2)).read();
-        verify(repository, times(1)).findAllQuestions();
-        verify(questionsShuffle, times(1)).shuffleQuestions(questions);
+        verify(repository, times(1)).findAllQuestionsInRandomOrder();
         verify(quiz, times(1)).startQuiz(questions);
         verify(ioConsoleUtil, times(1)).println(printThirdLine);
-        verify(ioConsoleUtil, times(1)).println(printFourLine);
-        verify(ioConsoleUtil, times(1)).println(printFifthLine);
 
     }
 
     @Test
     void startStudentQuiz_shouldFailQuizResult() {
         //given
-        String firstName = "Ivan";
-        String lastName = "Ivanov";
+        var student = new Student("Ivan", "Ivanov");
         int countRightStudentQuestions = 1;
 
         List<Question> questions = List.of(
@@ -132,10 +124,8 @@ class StudentQuizServiceTest {
                 new QuizResult("question one", new Answer(true, "rightAnswerOne")),
                 new QuizResult("question two", new Answer(false, "wrongAnswerOne")));
 
-        String printFirstLine = "Hello, input your name...";
-        String printSecondLine = "And last name...";
-        String printThirdLine = "Okay. Now start quiz %s %s".formatted(firstName, lastName);
-        String printFourLine = """
+        String printFirstLine = "Okay. Now start quiz %s %s".formatted(student.firstName(), student.lastName());
+        String printSecondLine = """
                 Question: question one
                 answer: rightAnswerOne
                 isRight: true
@@ -145,25 +135,22 @@ class StudentQuizServiceTest {
                 isRight: false
                 """;
 
-        String printFifthLine = "Fail. Attempt next time. your scores : %s. minimal scores: %s"
+        String printThirdLine = "Fail. Attempt next time. your scores : %s. minimal scores: %s"
                 .formatted(countRightStudentQuestions, minimalRightAnswers);
 
         StudentQuizResult expected = new StudentQuizResult(
-                new Student(firstName, lastName),
+                student,
                 studentQuizResult,
                 countRightStudentQuestions,
                 minimalRightAnswers);
 
         //when
+        when(studentRepository.getStudent()).thenReturn(student);
         doNothing().when(ioConsoleUtil).println(printFirstLine);
-        when(ioConsoleUtil.read()).thenReturn(firstName, lastName);
         doNothing().when(ioConsoleUtil).println(printSecondLine);
-        when(repository.findAllQuestions()).thenReturn(questions);
-        when(questionsShuffle.shuffleQuestions(questions)).thenReturn(questions);
+        when(repository.findAllQuestionsInRandomOrder()).thenReturn(questions);
         when(quiz.startQuiz(questions)).thenReturn(studentQuizResult);
         doNothing().when(ioConsoleUtil).println(printThirdLine);
-        doNothing().when(ioConsoleUtil).println(printFourLine);
-        doNothing().when(ioConsoleUtil).println(printFifthLine);
 
         StudentQuizResult actual = subj.startStudentQuiz();
 
@@ -172,13 +159,9 @@ class StudentQuizServiceTest {
 
         verify(ioConsoleUtil, times(1)).println(printFirstLine);
         verify(ioConsoleUtil, times(1)).println(printSecondLine);
-        verify(ioConsoleUtil, times(2)).read();
-        verify(repository, times(1)).findAllQuestions();
-        verify(questionsShuffle, times(1)).shuffleQuestions(questions);
+        verify(repository, times(1)).findAllQuestionsInRandomOrder();
         verify(quiz, times(1)).startQuiz(questions);
         verify(ioConsoleUtil, times(1)).println(printThirdLine);
-        verify(ioConsoleUtil, times(1)).println(printFourLine);
-        verify(ioConsoleUtil, times(1)).println(printFifthLine);
 
     }
 }

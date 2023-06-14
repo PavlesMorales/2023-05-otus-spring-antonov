@@ -1,2 +1,3 @@
 question, right_answer, option_1, option_2, option_3
 What is a correct syntax to output "Hello World" in Java?, System.out.println("Hello World");, Console.WriteLine("Hello World");, print("Hello World");, echo("Hello World");
+What is the correct way to create an object called myObj of MyClass?, MyClass myObj = new MyClass();,class MyClass = new myObj();,class myObj = new MyClass();,new myObj = MyClass();

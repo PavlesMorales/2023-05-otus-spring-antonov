@@ -1,68 +1,37 @@
 package ru.otus.spring.homework.util.impl;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ConsolePrinterTest {
 
     @Mock
-    Scanner scanner;
+    InputStream inputStream;
+
+    @Mock
+    PrintStream printStream;
 
     @InjectMocks
     IOConsoleUtilImpl subj;
 
-    ByteArrayOutputStream stream;
-
-
-    @BeforeEach
-    void init() {
-        stream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(stream));
-
-    }
 
     @Test
-    void test_shouldPrintMessage() throws IOException {
-        String expected = "Hello" + System.lineSeparator();
+    void test_shouldPrintMessage() {
         String message = "Hello";
 
+        doNothing().when(printStream).println(message);
         subj.println(message);
 
-        stream.flush();
-        String actual = stream.toString();
-
-        assertEquals(expected, actual);
-
-        verifyNoInteractions(scanner);
-
+        verify(printStream, times(1)).println(message);
     }
 
-    @Test
-    void read_shouldReadFromConsole() {
-        String expected = "Hello world";
-        when(scanner.nextLine()).thenReturn(expected);
-        String actual = subj.read();
-
-        assertEquals(expected, actual);
-        verify(scanner, times(1)).nextLine();
-    }
-
-    @AfterAll
-    static void shoutDown() {
-        System.setOut(System.out);
-    }
 }

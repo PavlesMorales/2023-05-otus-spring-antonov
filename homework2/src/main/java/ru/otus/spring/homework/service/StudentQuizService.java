@@ -2,14 +2,13 @@ package ru.otus.spring.homework.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.Answer;
+import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.QuizResult;
-import ru.otus.spring.homework.model.Student;
 import ru.otus.spring.homework.model.StudentQuizResult;
 import ru.otus.spring.homework.repository.QuestionRepository;
+import ru.otus.spring.homework.repository.StudentRepository;
 import ru.otus.spring.homework.util.IOConsoleUtil;
-import ru.otus.spring.homework.util.QuestionsShuffle;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,35 +21,33 @@ public class StudentQuizService {
 
     private final Quiz quiz;
 
+    private final StudentRepository studentRepository;
+
     private final QuestionRepository repository;
 
-    private final QuestionsShuffle questionsShuffle;
 
     private final int minimalRightAnswers;
 
     public StudentQuizService(IOConsoleUtil ioConsoleUtil,
                               Quiz quiz,
+                              StudentRepository studentRepository,
                               QuestionRepository repository,
-                              QuestionsShuffle questionsShuffle,
                               @Value("${minimal-count-right-answers}") int minimalRightAnswers) {
 
         this.ioConsoleUtil = ioConsoleUtil;
         this.quiz = quiz;
+        this.studentRepository = studentRepository;
         this.repository = repository;
-        this.questionsShuffle = questionsShuffle;
         this.minimalRightAnswers = minimalRightAnswers;
     }
 
     public StudentQuizResult startStudentQuiz() {
-        ioConsoleUtil.println("Hello, input your name...");
-        String firstName = ioConsoleUtil.read();
-        ioConsoleUtil.println("And last name...");
-        String lastName = ioConsoleUtil.read();
+        var student = studentRepository.getStudent();
 
-        ioConsoleUtil.println("Okay. Now start quiz %s %s".formatted(firstName, lastName));
+        ioConsoleUtil.println("Okay. Now start quiz %s %s".formatted(student.firstName(), student.lastName()));
 
-        var student = new Student(firstName, lastName);
-        List<Question> questions = questionsShuffle.shuffleQuestions(repository.findAllQuestions());
+
+        List<Question> questions = repository.findAllQuestionsInRandomOrder();
 
         List<QuizResult> studentQuizResult = quiz.startQuiz(questions);
         ioConsoleUtil.println(getQuestionWithStudentAnswers(studentQuizResult));
