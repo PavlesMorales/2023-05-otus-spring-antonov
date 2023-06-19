@@ -1,2 +1,6 @@
-minimal-count-right-answers: 2
-path-to-questions: /test-questions.csv
+spring:
+  profiles:
+    active: test
+  messages:
+    basename: "i18n/messages"
+    encoding: "UTF-8"

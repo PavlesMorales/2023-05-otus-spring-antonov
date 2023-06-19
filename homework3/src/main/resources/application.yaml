@@ -1,2 +1,8 @@
-minimal-count-right-answers: 3
-path-to-questions: /questions.csv
+spring:
+  profiles:
+    active: en
+  messages:
+    basename: "i18n/messages"
+    encoding: "UTF-8"
+application:
+  minimal-count-right-answers: 4

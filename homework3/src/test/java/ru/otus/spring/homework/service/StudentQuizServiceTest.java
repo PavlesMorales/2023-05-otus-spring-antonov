@@ -1,44 +1,24 @@
 package ru.otus.spring.homework.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import ru.otus.spring.homework.TestConfig;
 import ru.otus.spring.homework.model.*;
-import ru.otus.spring.homework.repository.QuestionRepository;
-import ru.otus.spring.homework.repository.StudentRepository;
-import ru.otus.spring.homework.util.IOConsoleUtil;
-import ru.otus.spring.homework.util.QuestionsShuffle;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class StudentQuizServiceTest {
+class StudentQuizServiceTest extends TestConfig {
 
-    @Mock
-    IOConsoleUtil ioConsoleUtil;
+    @MockBean
+    QuizService quizService;
 
-    @Mock
-    Quiz quiz;
-
-    @Mock
-    StudentRepository studentRepository;
-
-    @Mock
-    QuestionRepository repository;
-
+    @Autowired
     StudentQuizService subj;
 
-    int minimalRightAnswers = 2;
-
-    @BeforeEach
-    void startUp() {
-        subj = new StudentQuizService(ioConsoleUtil, quiz, studentRepository, repository, minimalRightAnswers);
-    }
 
     @Test
     void startStudentQuiz_shouldSuccessQuizResult() {
@@ -61,45 +41,23 @@ class StudentQuizServiceTest {
                 new QuizResult("question one", new Answer(true, "rightAnswerOne")),
                 new QuizResult("question two", new Answer(true, "rightAnswerTwo")));
 
-        String printFirstLine = "Okay. Now start quiz %s %s".formatted(student.firstName(), student.lastName());
-        String printSecondLine = """
-                Question: question one
-                answer: rightAnswerOne
-                isRight: true
-                                
-                Question: question two
-                answer: rightAnswerTwo
-                isRight: true
-                """;
-
-        String printThirdLine = "Congratulation your scores : %s. minimal scores: %s"
-                .formatted(countRightStudentQuestions, minimalRightAnswers);
 
         StudentQuizResult expected = new StudentQuizResult(
                 student,
                 studentQuizResult,
                 countRightStudentQuestions,
-                minimalRightAnswers);
+                2);
 
         //when
-        when(studentRepository.getStudent()).thenReturn(student);
-        doNothing().when(ioConsoleUtil).println(printFirstLine);
-        doNothing().when(ioConsoleUtil).println(printSecondLine);
-        when(repository.findAllQuestionsInRandomOrder()).thenReturn(questions);
-        when(quiz.startQuiz(questions)).thenReturn(studentQuizResult);
-        doNothing().when(ioConsoleUtil).println(printThirdLine);
+        when(quizService.startQuiz(questions)).thenReturn(studentQuizResult);
 
-        StudentQuizResult actual = subj.startStudentQuiz();
+
+        StudentQuizResult actual = subj.startStudentQuiz(student, questions);
 
         //then
         assertEquals(expected, actual);
 
-        verify(studentRepository, times(1)).getStudent();
-        verify(ioConsoleUtil, times(1)).println(printFirstLine);
-        verify(ioConsoleUtil, times(1)).println(printSecondLine);
-        verify(repository, times(1)).findAllQuestionsInRandomOrder();
-        verify(quiz, times(1)).startQuiz(questions);
-        verify(ioConsoleUtil, times(1)).println(printThirdLine);
+        verify(quizService, times(1)).startQuiz(questions);
 
     }
 
@@ -124,44 +82,22 @@ class StudentQuizServiceTest {
                 new QuizResult("question one", new Answer(true, "rightAnswerOne")),
                 new QuizResult("question two", new Answer(false, "wrongAnswerOne")));
 
-        String printFirstLine = "Okay. Now start quiz %s %s".formatted(student.firstName(), student.lastName());
-        String printSecondLine = """
-                Question: question one
-                answer: rightAnswerOne
-                isRight: true
-                                
-                Question: question two
-                answer: wrongAnswerOne
-                isRight: false
-                """;
-
-        String printThirdLine = "Fail. Attempt next time. your scores : %s. minimal scores: %s"
-                .formatted(countRightStudentQuestions, minimalRightAnswers);
 
         StudentQuizResult expected = new StudentQuizResult(
                 student,
                 studentQuizResult,
                 countRightStudentQuestions,
-                minimalRightAnswers);
+                2);
 
         //when
-        when(studentRepository.getStudent()).thenReturn(student);
-        doNothing().when(ioConsoleUtil).println(printFirstLine);
-        doNothing().when(ioConsoleUtil).println(printSecondLine);
-        when(repository.findAllQuestionsInRandomOrder()).thenReturn(questions);
-        when(quiz.startQuiz(questions)).thenReturn(studentQuizResult);
-        doNothing().when(ioConsoleUtil).println(printThirdLine);
+        when(quizService.startQuiz(questions)).thenReturn(studentQuizResult);
 
-        StudentQuizResult actual = subj.startStudentQuiz();
+        StudentQuizResult actual = subj.startStudentQuiz(student, questions);
 
         //then
         assertEquals(expected, actual);
 
-        verify(ioConsoleUtil, times(1)).println(printFirstLine);
-        verify(ioConsoleUtil, times(1)).println(printSecondLine);
-        verify(repository, times(1)).findAllQuestionsInRandomOrder();
-        verify(quiz, times(1)).startQuiz(questions);
-        verify(ioConsoleUtil, times(1)).println(printThirdLine);
+        verify(quizService, times(1)).startQuiz(questions);
 
     }
 }

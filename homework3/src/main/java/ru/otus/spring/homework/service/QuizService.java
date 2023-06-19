@@ -5,19 +5,21 @@ import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.QuizResult;
 import ru.otus.spring.homework.util.IOConsoleUtil;
+import ru.otus.spring.homework.util.MessageSourceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class Quiz {
+public class QuizService {
 
-    private static final String QUIZ_TEMPLATE = "Question %s : ";
+    private final MessageSourceUtil messageSourceUtil;
 
     private final IOConsoleUtil ioConsoleUtil;
 
-    public Quiz(IOConsoleUtil ioConsoleUtil) {
+    public QuizService(MessageSourceUtil messageSourceUtil, IOConsoleUtil ioConsoleUtil) {
+        this.messageSourceUtil = messageSourceUtil;
         this.ioConsoleUtil = ioConsoleUtil;
     }
 
@@ -25,7 +27,7 @@ public class Quiz {
         List<QuizResult> questionWithStudentAnswer = new ArrayList<>();
 
         for (int i = 0; i < questions.size(); i++) {
-            ioConsoleUtil.println(QUIZ_TEMPLATE.formatted(i + 1));
+            ioConsoleUtil.println(messageSourceUtil.getMessageWithArgs("quiz.question.text", i + 1));
             var question = questions.get(i);
             ioConsoleUtil.println(question.question());
 

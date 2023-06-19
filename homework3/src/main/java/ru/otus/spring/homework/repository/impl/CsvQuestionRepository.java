@@ -1,7 +1,7 @@
 package ru.otus.spring.homework.repository.impl;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.otus.spring.homework.config.AppProperties;
 import ru.otus.spring.homework.exceptions.CsvParserException;
 import ru.otus.spring.homework.exceptions.ResourceReaderException;
 import ru.otus.spring.homework.model.Answer;
@@ -18,14 +18,12 @@ import java.util.List;
 @Component
 public class CsvQuestionRepository implements QuestionRepository {
 
-    private final String pathToResource;
+    private final String pathToQuestions;
 
     private final QuestionsShuffle questionsShuffle;
 
-    public CsvQuestionRepository(@Value("${path-to-questions}") String pathToResource,
-                                 QuestionsShuffle questionsShuffle) {
-
-        this.pathToResource = pathToResource;
+    public CsvQuestionRepository(AppProperties properties, QuestionsShuffle questionsShuffle) {
+        this.pathToQuestions = properties.pathToQuestions();
         this.questionsShuffle = questionsShuffle;
     }
 
@@ -42,7 +40,7 @@ public class CsvQuestionRepository implements QuestionRepository {
 
     private List<Question> readResourceAsStrings() {
         List<Question> result = new ArrayList<>();
-        try (var in = getClass().getResourceAsStream(pathToResource)) {
+        try (var in = getClass().getResourceAsStream(pathToQuestions)) {
 
             if (in == null) {
                 throw new ResourceReaderException("Resource is null");
@@ -51,7 +49,6 @@ public class CsvQuestionRepository implements QuestionRepository {
             var reader = new BufferedReader(new InputStreamReader(in));
 
             String ignoreHeaders = reader.readLine();
-            System.out.println(ignoreHeaders);
 
             while (reader.ready()) {
                 result.add(readValue(reader.readLine()));

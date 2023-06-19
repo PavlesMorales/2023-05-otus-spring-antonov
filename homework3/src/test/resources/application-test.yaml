@@ -1,0 +1,4 @@
+application:
+  minimal-count-right-answers: 2
+  path-to-questions: /questions-test.csv
+  locale: en

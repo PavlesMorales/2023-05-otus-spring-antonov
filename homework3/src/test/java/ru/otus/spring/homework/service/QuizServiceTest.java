@@ -5,27 +5,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import ru.otus.spring.homework.TestConfig;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.QuizResult;
-import ru.otus.spring.homework.repository.QuestionRepository;
 import ru.otus.spring.homework.util.IOConsoleUtil;
-import ru.otus.spring.homework.util.Printable;
-import ru.otus.spring.homework.util.Readable;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class QuizTest {
+class QuizServiceTest extends TestConfig {
 
-    @Mock
+    @MockBean
     IOConsoleUtil ioConsoleUtil;
 
-    @InjectMocks
-    Quiz subj;
+    @Autowired
+    QuizService subj;
 
     @Test
     void startQuiz() {
@@ -45,12 +44,12 @@ class QuizTest {
                 )));
 
         //when
-        String questionOne = "Question 1 : ";
+        String questionOne = "Question 1 :";
         String questionTextOne = "question one";
         String answersTextOne = """
                 wrongAnswerOne
                 rightAnswerOne""";
-        String questionTwo = "Question 2 : ";
+        String questionTwo = "Question 2 :";
         String questionTextTwo = "question two";
         String answersTextTwo = """
                 rightAnswerTwo

@@ -1,16 +1,12 @@
 package ru.otus.spring.homework;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import ru.otus.spring.homework.service.StudentQuizService;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@ComponentScan
+@SpringBootApplication
 public class Main {
 
     public static void main(String[] args) {
-
-        var context = new AnnotationConfigApplicationContext(Main.class);
-        StudentQuizService bean = context.getBean(StudentQuizService.class);
-        bean.startStudentQuiz();
+        SpringApplication.run(Main.class, args);
     }
 }

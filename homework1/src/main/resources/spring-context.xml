@@ -17,7 +17,7 @@
         <constructor-arg index="1" ref="csvToQuestionMapper"/>
     </bean>
 
-    <bean id="quiz" class="ru.otus.spring.homework.service.Quiz">
+    <bean id="quiz" class="ru.otus.spring.homework.service.QuizService">
         <constructor-arg index="0" ref="consolePrinter"/>
         <constructor-arg index="1" ref="questionRepository"/>
     </bean>
