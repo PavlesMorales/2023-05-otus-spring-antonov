@@ -1,17 +1,13 @@
 package ru.otus.spring.homework.service;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.spring.homework.TestConfig;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.QuizResult;
-import ru.otus.spring.homework.util.IOConsoleUtil;
+import ru.otus.spring.homework.util.IOConsoleProvider;
 
 import java.util.List;
 
@@ -21,7 +17,7 @@ import static org.mockito.Mockito.*;
 class QuizServiceTest extends TestConfig {
 
     @MockBean
-    IOConsoleUtil ioConsoleUtil;
+    IOConsoleProvider ioConsoleUtil;
 
     @Autowired
     QuizService subj;

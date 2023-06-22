@@ -1,6 +1,6 @@
 package ru.otus.spring.homework.util;
 
-public interface MessageSourceUtil {
+public interface MessageSourceProvider {
 
     String getMessage(String key);
 

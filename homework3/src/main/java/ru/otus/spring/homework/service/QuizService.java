@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.QuizResult;
-import ru.otus.spring.homework.util.IOConsoleUtil;
-import ru.otus.spring.homework.util.MessageSourceUtil;
+import ru.otus.spring.homework.util.IOConsoleProvider;
+import ru.otus.spring.homework.util.MessageSourceProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 @Service
 public class QuizService {
 
-    private final MessageSourceUtil messageSourceUtil;
+    private final MessageSourceProvider messageSourceProvider;
 
-    private final IOConsoleUtil ioConsoleUtil;
+    private final IOConsoleProvider ioConsoleUtil;
 
-    public QuizService(MessageSourceUtil messageSourceUtil, IOConsoleUtil ioConsoleUtil) {
-        this.messageSourceUtil = messageSourceUtil;
+    public QuizService(MessageSourceProvider messageSourceProvider, IOConsoleProvider ioConsoleUtil) {
+        this.messageSourceProvider = messageSourceProvider;
         this.ioConsoleUtil = ioConsoleUtil;
     }
 
@@ -27,7 +27,7 @@ public class QuizService {
         List<QuizResult> questionWithStudentAnswer = new ArrayList<>();
 
         for (int i = 0; i < questions.size(); i++) {
-            ioConsoleUtil.println(messageSourceUtil.getMessageWithArgs("quiz.question.text", i + 1));
+            ioConsoleUtil.println(messageSourceProvider.getMessageWithArgs("quiz.question.text", i + 1));
             var question = questions.get(i);
             ioConsoleUtil.println(question.question());
 
