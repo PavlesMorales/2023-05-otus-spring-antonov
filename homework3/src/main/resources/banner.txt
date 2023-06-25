@@ -1,0 +1,11 @@
+
+${AnsiColor.DEFAULT}        ______   ________  __    __   ______
+${AnsiColor.DEFAULT}       /      \ /        |/  |  /  | /      \
+${AnsiColor.DEFAULT}      /$$$$$$  |$$$$$$$$/ $$ |  $$ |/$$$$$$  |
+${AnsiColor.BLUE}      $$ |  $$ |   $$ |   $$ |  $$ |$$ \__$$/
+${AnsiColor.BLUE}      $$ |  $$ |   $$ |   $$ |  $$ |$$      \
+${AnsiColor.BLUE}      $$ |  $$ |   $$ |   $$ |  $$ | $$$$$$  |
+${AnsiColor.RED}      $$ \__$$ |   $$ |   $$ \__$$ |/  \__$$ |
+${AnsiColor.RED}      $$    $$/    $$ |   $$    $$/ $$    $$/
+${AnsiColor.RED}       $$$$$$/     $$/     $$$$$$/   $$$$$$/
+${AnsiColor.DEFAULT}
