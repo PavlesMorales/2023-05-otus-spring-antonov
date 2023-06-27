@@ -1,12 +1,16 @@
 package ru.otus.spring.homework.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import ru.otus.spring.homework.util.ApplicationPropertiesProvider;
+import ru.otus.spring.homework.util.LocaleProvider;
+import ru.otus.spring.homework.util.MinimalCountRightAnswersProvider;
+import ru.otus.spring.homework.util.ResourceNameProvider;
 
 import java.util.Locale;
 
 @ConfigurationProperties(prefix = "application")
-public class AppProperties implements ApplicationPropertiesProvider {
+public class AppProperties implements LocaleProvider,
+        ResourceNameProvider,
+        MinimalCountRightAnswersProvider {
     private final int minimalCountRightAnswers;
 
     private final String pathToQuestions;

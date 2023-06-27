@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.QuizResult;
-import ru.otus.spring.homework.util.IOConsoleProvider;
+import ru.otus.spring.homework.util.IOService;
 import ru.otus.spring.homework.util.MessageSourceProvider;
 
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ public class QuizService {
 
     private final MessageSourceProvider messageSourceProvider;
 
-    private final IOConsoleProvider ioConsoleUtil;
+    private final IOService ioConsoleUtil;
 
-    public QuizService(MessageSourceProvider messageSourceProvider, IOConsoleProvider ioConsoleUtil) {
+    public QuizService(MessageSourceProvider messageSourceProvider, IOService ioConsoleUtil) {
         this.messageSourceProvider = messageSourceProvider;
         this.ioConsoleUtil = ioConsoleUtil;
     }

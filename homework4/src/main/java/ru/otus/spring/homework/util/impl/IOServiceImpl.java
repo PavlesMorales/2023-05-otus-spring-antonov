@@ -1,18 +1,18 @@
 package ru.otus.spring.homework.util.impl;
 
-import ru.otus.spring.homework.util.IOConsoleProvider;
+import ru.otus.spring.homework.util.IOService;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-public class IOConsoleProviderImpl implements IOConsoleProvider {
+public class IOServiceImpl implements IOService {
 
     private final Scanner scanner;
 
     private final PrintStream outputStream;
 
-    public IOConsoleProviderImpl(InputStream inputStream, PrintStream printStream) {
+    public IOServiceImpl(InputStream inputStream, PrintStream printStream) {
         this.scanner = new Scanner(inputStream);
         this.outputStream = printStream;
 

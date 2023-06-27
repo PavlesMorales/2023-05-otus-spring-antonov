@@ -21,7 +21,7 @@ class ConsolePrinterTest {
     PrintStream printStream;
 
     @InjectMocks
-    IOConsoleProviderImpl subj;
+    IOServiceImpl subj;
 
 
     @Test

@@ -14,12 +14,10 @@ class MessageSourceProviderImplTest extends TestConfig {
     MessageSourceProvider messageSourceProvider;
 
     @ParameterizedTest
-    @CsvSource({"user.hello,Hello",
-            "user.first,Input your name...",
-            "user.last,Input last name..."})
+    @CsvSource("quiz.reason, Before login")
     void getMessage(String value, String expected) {
 
-        String actual = messageSourceProvider.getMessageWithArgs(value);
+        String actual = messageSourceProvider.getMessage(value);
         assertEquals(expected, actual);
     }
 

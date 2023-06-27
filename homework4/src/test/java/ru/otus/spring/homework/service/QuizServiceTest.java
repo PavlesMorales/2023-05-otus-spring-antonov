@@ -7,7 +7,7 @@ import ru.otus.spring.homework.TestConfig;
 import ru.otus.spring.homework.model.Answer;
 import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.QuizResult;
-import ru.otus.spring.homework.util.IOConsoleProvider;
+import ru.otus.spring.homework.util.IOService;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 class QuizServiceTest extends TestConfig {
 
     @MockBean
-    IOConsoleProvider ioConsoleUtil;
+    IOService ioConsoleUtil;
 
     @Autowired
     QuizService subj;

@@ -6,7 +6,7 @@ import ru.otus.spring.homework.model.Question;
 import ru.otus.spring.homework.model.QuizResult;
 import ru.otus.spring.homework.model.Student;
 import ru.otus.spring.homework.model.StudentQuizResult;
-import ru.otus.spring.homework.util.IOConsoleProvider;
+import ru.otus.spring.homework.util.IOService;
 import ru.otus.spring.homework.util.MessageSourceProvider;
 import ru.otus.spring.homework.util.MinimalCountRightAnswersProvider;
 
@@ -19,14 +19,14 @@ public class StudentQuizService {
 
     private final MessageSourceProvider messageSourceProvider;
 
-    private final IOConsoleProvider ioConsoleUtil;
+    private final IOService ioConsoleUtil;
 
     private final QuizService quiz;
 
     private final MinimalCountRightAnswersProvider minimalRightAnswersProvider;
 
     public StudentQuizService(MessageSourceProvider messageSourceProvider,
-                              IOConsoleProvider ioConsoleUtil,
+                              IOService ioConsoleUtil,
                               QuizService quiz,
                               MinimalCountRightAnswersProvider minimalRightAnswersProvider) {
 

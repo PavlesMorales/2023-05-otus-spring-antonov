@@ -1,11 +1,14 @@
 package ru.otus.spring.homework.view;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.shell.InputProvider;
+import org.springframework.shell.ResultHandlerService;
+import org.springframework.shell.Shell;
 import ru.otus.spring.homework.TestConfig;
 import ru.otus.spring.homework.model.*;
 import ru.otus.spring.homework.repository.QuestionRepository;
@@ -14,26 +17,64 @@ import ru.otus.spring.homework.service.StudentQuizService;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class StudentQuizConsoleViewTest {
+class StudentQuizViewTest extends TestConfig {
 
-    @Mock
+
+    InputProvider inputProvider;
+
+    ArgumentCaptor<Object> argumentCaptor;
+
+    @SpyBean
+    ResultHandlerService resultHandlerService;
+
+    @Autowired
+    Shell shell;
+
+    @MockBean
     StudentQuizService studentQuizService;
 
-    @Mock
+    @MockBean
     StudentRepository studentRepository;
 
-    @Mock
+    @MockBean
     QuestionRepository questionRepository;
-    @InjectMocks
-    StudentQuizConsoleView subj;
+
+    @BeforeEach
+    void setUp() {
+        inputProvider = mock(InputProvider.class);
+        argumentCaptor = ArgumentCaptor.forClass(Object.class);
+    }
 
     @Test
-    void run() {
+    void shouldSuccessLogin() throws Exception {
+
+        Student student = new Student("Ivan", "Ivanov");
+
+
+        doNothing().when(studentRepository).save(student);
+
+        when(inputProvider.readInput())
+                .thenReturn(() -> "l Ivan Ivanov")
+                .thenReturn(null);
+
+
+        shell.run(inputProvider);
+        verify(resultHandlerService, times(1)).handle(argumentCaptor.capture());
+
+        List<Object> results = argumentCaptor.getAllValues();
+
+        assertThat(results).contains("Hello Ivan Ivanov");
+
+        verify(studentRepository, times(1)).save(student);
+
+    }
+
+    @Test
+    void shouldSuccessStartQuiz() throws Exception {
 
         Student student = new Student("Ivan", "Ivanov");
         List<Question> questions = List.of(
@@ -60,9 +101,20 @@ class StudentQuizConsoleViewTest {
         given(questionRepository.findAllQuestionsInRandomOrder()).willReturn(questions);
         given(studentQuizService.startStudentQuiz(student, questions)).willReturn(studentQuizResult);
 
-        subj.run();
+        when(inputProvider.readInput())
+                .thenReturn(() -> "start")
+                .thenReturn(null);
 
-        verify(studentRepository, times(1)).getStudent();
+
+        shell.run(inputProvider);
+        verify(resultHandlerService, times(1)).handle(argumentCaptor.capture());
+
+        List<Object> results = argumentCaptor.getAllValues();
+
+        assertThat(results).contains("Goodbye: Ivan Ivanov");
+
+
+        verify(studentRepository, times(2)).getStudent();
         verify(questionRepository, times(1)).findAllQuestionsInRandomOrder();
         verify(studentQuizService, times(1)).startStudentQuiz(student, questions);
 
