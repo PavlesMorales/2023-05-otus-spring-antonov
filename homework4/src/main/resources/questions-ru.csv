@@ -1,0 +1,6 @@
+вопрос, правильный ответ, не правильный ответ 1, не правильный ответ 2, не правильный ответ 3
+Какой код выведет на консоль "Hello World" в Java?, System.out.println("Hello World");, Console.WriteLine("Hello World");, print("Hello World");, echo("Hello World");
+Java — это сокращение от "JavaScript".?, нет, да, , ,
+Какой тип данных используется в Java, для хранения текста?, String, text, varchar, Text
+Какой метод вернет строку в верхнем регистре?, toUpperCase(), tuc(),upperCase(),touppercase()
+Как правильно создать переменную myObj класса MyClass?, MyClass myObj = new MyClass();,class MyClass = new myObj();,class myObj = new MyClass();,new myObj = MyClass();

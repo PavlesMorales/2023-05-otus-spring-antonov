@@ -1,0 +1,9 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+  profiles:
+    active: test
+  messages:
+    basename: "i18n/messages"
+    encoding: "UTF-8"
