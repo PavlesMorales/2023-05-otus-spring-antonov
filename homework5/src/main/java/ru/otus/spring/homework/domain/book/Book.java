@@ -5,5 +5,5 @@ import ru.otus.spring.homework.domain.author.Author;
 import ru.otus.spring.homework.domain.genre.Genre;
 
 @Builder(toBuilder = true)
-public record Book(long id, String name, Author author, Genre genre) {
+public record Book(Long id, String name, Author author, Genre genre) {
 }

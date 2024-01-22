@@ -3,17 +3,16 @@ package ru.otus.spring.homework.service;
 import ru.otus.spring.homework.domain.genre.Genre;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface GenreService {
 
-    Optional<Genre> createGenre(String genre);
+    Genre create(Genre genre);
 
     List<Genre> getAll();
 
-    boolean delete(long id);
+    void delete(Long id);
 
-    Optional<Genre> update(long id, String newName);
+    Genre update(Genre genre);
 
-    Optional<Genre> get(long id);
+    Genre getById(Long id);
 }

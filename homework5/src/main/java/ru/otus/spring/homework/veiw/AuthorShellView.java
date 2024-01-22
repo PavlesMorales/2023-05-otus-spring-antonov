@@ -9,8 +9,6 @@ import ru.otus.spring.homework.domain.author.Author;
 import ru.otus.spring.homework.service.AuthorService;
 import ru.otus.spring.homework.tableconstructor.AuthorTableConstructor;
 
-import java.util.Optional;
-
 @ShellComponent
 @RequiredArgsConstructor
 public class AuthorShellView {
@@ -23,12 +21,13 @@ public class AuthorShellView {
     public String createAuthor(@ShellOption @Size(min = 2, max = 40) String firstName,
                                @ShellOption @Size(min = 2, max = 40) String lastName) {
 
-        Optional<Author> author = authorService.create(firstName, lastName);
-        if (author.isPresent()) {
-            return tableConstructor.createTable(author.get());
-        } else {
-            return "Author not created";
-        }
+        Author author = authorService.create(Author.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .build()
+        );
+
+        return tableConstructor.createTable(author);
     }
 
     @ShellMethod(value = "Get all author command", key = "author-show-all")
@@ -40,31 +39,24 @@ public class AuthorShellView {
     public String update(@ShellOption Long id,
                          @ShellOption @Size(min = 2, max = 40) String firstName,
                          @ShellOption @Size(min = 2, max = 40) String lastName) {
-        Optional<Author> authorOptional = authorService.update(id, firstName, lastName);
-        if (authorOptional.isPresent()) {
-            return tableConstructor.createTable(authorOptional.get());
-        } else {
-            return "Author not update";
-        }
+
+        Author author = authorService.update(Author.builder()
+                .id(id)
+                .firstName(firstName)
+                .lastName(lastName)
+                .build()
+        );
+
+        return tableConstructor.createTable(author);
     }
 
     @ShellMethod(value = "Get author by id", key = "author-get")
     public String getAuthor(@ShellOption Long id) {
-        Optional<Author> authorOptional = authorService.getById(id);
-        if (authorOptional.isPresent()) {
-            return tableConstructor.createTable(authorOptional.get());
-        } else {
-            return "Author not found";
-        }
+        return tableConstructor.createTable(authorService.getById(id));
     }
 
     @ShellMethod(value = "Delete author by id command", key = "author-delete")
-    public String delete(@ShellOption Long id) {
-        boolean deleted = authorService.delete(id);
-        if (deleted) {
-            return "Author with id %s deleted".formatted(id);
-        } else {
-            return "Author with id not deleted";
-        }
+    public void delete(@ShellOption Long id) {
+        authorService.delete(id);
     }
 }

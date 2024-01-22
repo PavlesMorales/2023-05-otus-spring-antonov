@@ -7,15 +7,15 @@ import java.util.Optional;
 
 public interface GenreDao {
 
-    Optional<Genre> create(String genreName);
+    Optional<Genre> create(Genre genre);
 
     List<Genre> getAll();
 
-    Optional<Genre> update(long id, String genreName);
+    void update(Genre genre);
 
-    boolean delete(long id);
+    void delete(long id);
 
-    Optional<Genre> getByName(String genreName);
+    Optional<Genre> getByName(Genre genre);
 
-    Optional<Genre> get(long id);
+    Optional<Genre> getById(long id);
 }

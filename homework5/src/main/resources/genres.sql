@@ -1,4 +1,4 @@
-INSERT INTO genres (GENRE_NAME)
+INSERT INTO genres (genre_name)
 VALUES ('Роман'),
        ('Дистопия'),
        ('Фэнтези'),

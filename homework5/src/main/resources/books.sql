@@ -1,4 +1,4 @@
-insert into books (BOOK_NAME, AUTHOR_ID, GENRE_ID)
+insert into books (book_name, author_id, genre_id)
 values ('Война и мир', 1, 1),
        ('1984', 2, 2),
        ('Преступление и наказание', 3, 1),

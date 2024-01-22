@@ -25,6 +25,17 @@ class BookDaoImplTest extends TestConfig {
 
     @Test
     void create() {
+
+        Book book = Book.builder()
+                .name("BIG BOOK")
+                .genre(Genre.builder()
+                        .id(1L)
+                        .build())
+                .author(Author.builder()
+                        .id(1L)
+                        .build())
+                .build();
+
         Book expected = Book.builder()
                 .id(9L)
                 .name("BIG BOOK")
@@ -39,9 +50,12 @@ class BookDaoImplTest extends TestConfig {
                         .build())
                 .build();
 
-        Optional<Book> actual = subj.create("BIG BOOK", 1, 1);
+        Optional<Book> actual = subj.create(book);
 
-        assertThat(actual).isPresent().get().isEqualTo(expected);
+        assertThat(actual)
+                .isPresent()
+                .get()
+                .isEqualTo(expected);
     }
 
     @Test
@@ -51,9 +65,34 @@ class BookDaoImplTest extends TestConfig {
 
     @Test
     void update() {
+        Book book = Book.builder()
+                .id(1L)
+                .name("BIG BOOK 2")
+                .genre(Genre.builder()
+                        .id(2L)
+                        .build())
+                .author(Author.builder()
+                        .id(2L)
+                        .build())
+                .build();
+
         Book expected = Book.builder()
                 .id(1L)
                 .name("BIG BOOK 2")
+                .genre(Genre.builder()
+                        .id(2L)
+                        .genreName("Дистопия")
+                        .build())
+                .author(Author.builder()
+                        .id(2L)
+                        .firstName("Джордж")
+                        .lastName("Оруэлл")
+                        .build())
+                .build();
+
+        Book bookInDb = Book.builder()
+                .id(1L)
+                .name("Война и мир")
                 .genre(Genre.builder()
                         .id(1L)
                         .genreName("Роман")
@@ -65,13 +104,39 @@ class BookDaoImplTest extends TestConfig {
                         .build())
                 .build();
 
-        Optional<Book> actual = subj.update(1, "BIG BOOK 2");
+        assertThat(subj.getById(1L))
+                .isPresent()
+                .get()
+                .isEqualTo(bookInDb);
 
-        assertThat(actual).isPresent().get().isEqualTo(expected);
+        subj.update(book);
+
+        assertThat(subj.getById(1L))
+                .isPresent()
+                .get()
+                .isEqualTo(expected);
     }
 
     @Test
     void delete() {
+        Book bookInDb = Book.builder()
+                .id(1L)
+                .name("Война и мир")
+                .genre(Genre.builder()
+                        .id(1L)
+                        .genreName("Роман")
+                        .build())
+                .author(Author.builder()
+                        .id(1L)
+                        .firstName("Лев")
+                        .lastName("Толстой")
+                        .build())
+                .build();
+        assertThat(subj.getById(1L)).isPresent().get().isEqualTo(bookInDb);
+
+        subj.delete(1L);
+
+        assertThat(subj.getById(1L)).isEmpty();
     }
 
     @Test
@@ -92,6 +157,9 @@ class BookDaoImplTest extends TestConfig {
 
         Optional<Book> actual = subj.getById(1L);
 
-        assertThat(actual).isPresent().get().isEqualTo(expected);
+        assertThat(actual)
+                .isPresent()
+                .get()
+                .isEqualTo(expected);
     }
 }

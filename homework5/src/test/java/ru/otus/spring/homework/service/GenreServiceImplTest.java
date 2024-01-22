@@ -8,11 +8,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.spring.homework.dao.genre.GenreDao;
 import ru.otus.spring.homework.domain.genre.Genre;
+import ru.otus.spring.homework.exception.CreationException;
+import ru.otus.spring.homework.exception.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,28 +29,27 @@ class GenreServiceImplTest {
     void shouldCreateGenre() {
         String genreName = "some genre name";
         Optional<Genre> expected = Optional.of(Genre.builder().id(1L).genreName(genreName).build());
+        Genre genre = Genre.builder().genreName(genreName).build();
 
-        when(genreDao.create(genreName)).thenReturn(expected);
+        when(genreDao.create(genre)).thenReturn(expected);
 
-        Optional<Genre> actual = subj.createGenre(genreName);
+        Genre actual = subj.create(genre);
 
-        Assertions.assertThat(actual).isPresent();
-        Assertions.assertThat(expected).isEqualTo(actual);
+        Assertions.assertThat(actual).isEqualTo(expected.get());
 
-        verify(genreDao, times(1)).create(genreName);
+        verify(genreDao, times(1)).create(genre);
     }
 
     @Test
-    void shouldReturnEmptyOptional() {
+    void shouldThrownCreationException() {
         String genreName = "some genre name";
         Genre genre = Genre.builder().genreName(genreName).build();
 
-        when(genreDao.create(genreName)).thenReturn(Optional.empty());
+        when(genreDao.create(genre)).thenReturn(Optional.empty());
 
-        Optional<Genre> actual = subj.createGenre(genreName);
-        Assertions.assertThat(actual).isEmpty();
+        Assertions.assertThatThrownBy(() -> subj.create(genre)).isInstanceOf(CreationException.class);
 
-        verify(genreDao, times(1)).create(genreName);
+        verify(genreDao, times(1)).create(genre);
     }
 
     @Test
@@ -76,10 +76,8 @@ class GenreServiceImplTest {
     void shouldDeleteGenre() {
         long id = 1L;
 
-        when(genreDao.delete(id)).thenReturn(true);
-        boolean actual = subj.delete(id);
-        assertThat(actual).isTrue();
-
+        doNothing().when(genreDao).delete(1L);
+        subj.delete(1L);
         verify(genreDao, times(1)).delete(id);
 
     }
@@ -88,14 +86,25 @@ class GenreServiceImplTest {
     void shouldUpdateGenre() {
         long id = 1L;
         String newName = "newName";
-        Optional<Genre> expected = Optional.of(Genre.builder().id(1L).genreName(newName).build());
-        when(genreDao.update(id, newName)).thenReturn(expected);
+        Genre genre = Genre.builder().id(id).genreName(newName).build();
+        when(genreDao.getById(id)).thenReturn(Optional.of(genre));
+        doNothing().when(genreDao).update(genre);
 
-        Optional<Genre> actual = subj.update(id, newName);
-        Assertions.assertThat(actual)
-                .isPresent()
-                .isEqualTo(expected);
+        subj.update(genre);
 
-        verify(genreDao, times(1)).update(id, newName);
+        verify(genreDao, times(1)).getById(id);
+        verify(genreDao, times(1)).update(genre);
+    }
+
+    @Test
+    void shouldThrownNotFoundException() {
+        long id = 1L;
+        String newName = "newName";
+        Genre genre = Genre.builder().id(id).genreName(newName).build();
+        when(genreDao.getById(id)).thenReturn(Optional.empty());
+
+        Assertions.assertThatThrownBy(() -> subj.update(genre)).isInstanceOf(NotFoundException.class);
+
+        verify(genreDao, times(1)).getById(id);
     }
 }

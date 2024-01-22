@@ -23,12 +23,18 @@ class GenreDaoImplTest extends TestConfig {
 
     @Test
     void create() {
-        String expectedName = "bookName";
+        String expectedName = "genreName";
+
         Optional<Genre> expected = Optional.of(Genre.builder()
                 .id(5L)
                 .genreName(expectedName)
                 .build());
-        Optional<Genre> actualOptional = subj.create(expectedName);
+
+        Genre genre = Genre.builder()
+                .genreName(expectedName)
+                .build();
+
+        Optional<Genre> actualOptional = subj.create(genre);
 
         assertThat(actualOptional).isPresent().isEqualTo(expected);
 
@@ -42,13 +48,30 @@ class GenreDaoImplTest extends TestConfig {
     @Test
     void update() {
         long id = 1L;
-        String expectedName = "bookName";
+
+        String expectedName = "genreName";
+
         Genre expected = Genre.builder()
                 .id(id)
                 .genreName(expectedName)
                 .build();
-        Optional<Genre> actual = subj.update(id, expectedName);
-        assertThat(actual).isPresent().get().isEqualTo(expected);
+
+        Genre genre = Genre.builder()
+                .id(id)
+                .genreName("Роман")
+                .build();
+
+        assertThat(subj.getById(id))
+                .isPresent()
+                .get()
+                .isEqualTo(genre);
+
+        subj.update(expected);
+
+        assertThat(subj.getById(id))
+                .isPresent()
+                .get()
+                .isEqualTo(expected);
 
     }
 
@@ -58,8 +81,18 @@ class GenreDaoImplTest extends TestConfig {
                 .id(3L)
                 .genreName("Фэнтези")
                 .build();
-        Optional<Genre> actual = subj.getByName("Фэнтези");
-        assertThat(actual).isPresent().get().isEqualTo(expected);
+
+        Genre genre = Genre.builder()
+                .genreName("Фэнтези")
+                .build();
+
+
+        Optional<Genre> actual = subj.getByName(genre);
+
+        assertThat(actual)
+                .isPresent()
+                .get()
+                .isEqualTo(expected);
 
     }
 
@@ -69,15 +102,31 @@ class GenreDaoImplTest extends TestConfig {
                 .id(1L)
                 .genreName("Роман")
                 .build();
-        Optional<Genre> actual = subj.get(1L);
-        assertThat(actual).isPresent().get().isEqualTo(expected);
+
+        assertThat(subj.getById(1L))
+                .isPresent()
+                .get()
+                .isEqualTo(expected);
 
     }
 
     @Test
     void delete() {
-        assertThat(subj.delete(1L)).isTrue();
-        assertThat(subj.delete(-2)).isFalse();
+        Genre inDb = Genre.builder()
+                .id(3L)
+                .genreName("Фэнтези")
+                .build();
+
+
+        assertThat(subj.getById(3L))
+                .isPresent()
+                .get()
+                .isEqualTo(inDb);
+
+        subj.delete(3L);
+
+        assertThat(subj.getById(3L)).isEmpty();
+
     }
 
 }

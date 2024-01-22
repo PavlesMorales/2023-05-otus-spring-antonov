@@ -1,5 +1,6 @@
 package ru.otus.spring.homework.dao.author;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -28,9 +29,17 @@ class AuthorDaoImplTest extends TestConfig {
                 .lastName("Ivanov")
                 .build();
 
-        Optional<Author> actual = subj.create("Ivan", "Ivanov");
+        Author author = Author.builder()
+                .firstName("Ivan")
+                .lastName("Ivanov")
+                .build();
 
-        assertThat(actual).isPresent().get().isEqualTo(expected);
+        Optional<Author> actual = subj.create(author);
+
+        assertThat(actual)
+                .isPresent()
+                .get()
+                .isEqualTo(expected);
     }
 
     @Test
@@ -40,20 +49,39 @@ class AuthorDaoImplTest extends TestConfig {
 
     @Test
     void delete() {
-        assertThat(subj.delete(1L)).isTrue();
-        assertThat(subj.delete(999L)).isFalse();
+        Optional<Author> byId = subj.getById(1L);
+        Assertions.assertTrue(byId.isPresent());
+        subj.delete(1L);
+
+        Optional<Author> afterDelete = subj.getById(1L);
+        Assertions.assertTrue(afterDelete.isEmpty());
+
     }
 
     @Test
     void update() {
+        Author authorInDb = Author.builder()
+                .id(1L)
+                .firstName("Лев")
+                .lastName("Толстой")
+                .build();
+
+        assertThat(subj.getById(1L))
+                .isPresent()
+                .get()
+                .isEqualTo(authorInDb);
+
         Author expected = Author.builder()
                 .id(1L)
                 .firstName("Ivan")
                 .lastName("Ivanov")
                 .build();
 
-        Optional<Author> actual = subj.update(1, "Ivan", "Ivanov");
+        subj.update(expected);
 
-        assertThat(actual).isPresent().get().isEqualTo(expected);
+        assertThat(subj.getById(1L))
+                .isPresent()
+                .get()
+                .isEqualTo(expected);
     }
 }
