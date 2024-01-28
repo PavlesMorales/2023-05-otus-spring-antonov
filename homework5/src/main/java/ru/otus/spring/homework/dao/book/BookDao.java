@@ -9,13 +9,11 @@ import java.util.Optional;
 @Repository
 public interface BookDao {
 
-    Optional<Book> create(Book book);
-
     List<Book> getAll();
 
-    void update(Book book);
+    Book save(Book book);
 
-    void delete(long id);
+    void deleteById(Long id);
 
-    Optional<Book> getById(long id);
+    Optional<Book> getById(Long id);
 }

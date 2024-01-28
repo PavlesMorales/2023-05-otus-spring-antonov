@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.otus.spring.homework.domain.author.Author;
-import ru.otus.spring.homework.exception.CreationException;
+import ru.otus.spring.homework.exception.UpdateException;
 
 import java.util.List;
 import java.util.Map;
@@ -60,11 +60,18 @@ public class AuthorDaoImpl implements AuthorDao {
     @Override
     public void update(Author author) {
         try {
-            jdbcOperations.update(
+            final int updateRowCount = jdbcOperations.update(
                     "update authors set first_name = :firstName, last_name = :lastName where id = :id",
-                    Map.of("id", author.id(), "firstName", author.firstName(), "lastName", author.lastName()));
+                    Map.of(
+                            "id", author.id(),
+                            "firstName", author.firstName(),
+                            "lastName", author.lastName())
+            );
+            if (updateRowCount > 1) {
+                throw new UpdateException("Error update author");
+            }
         } catch (DataAccessException e) {
-            throw new CreationException("Error update author");
+            throw new UpdateException("Error update author");
         }
     }
 

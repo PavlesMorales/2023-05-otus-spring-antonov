@@ -24,20 +24,9 @@ class BookDaoImplTest extends TestConfig {
     BookDaoImpl subj;
 
     @Test
-    void create() {
+    void shouldSuccessInsertNewBook() {
 
         Book book = Book.builder()
-                .name("BIG BOOK")
-                .genre(Genre.builder()
-                        .id(1L)
-                        .build())
-                .author(Author.builder()
-                        .id(1L)
-                        .build())
-                .build();
-
-        Book expected = Book.builder()
-                .id(9L)
                 .name("BIG BOOK")
                 .genre(Genre.builder()
                         .id(1L)
@@ -50,12 +39,10 @@ class BookDaoImplTest extends TestConfig {
                         .build())
                 .build();
 
-        Optional<Book> actual = subj.create(book);
+        Book actual = subj.save(book);
 
         assertThat(actual)
-                .isPresent()
-                .get()
-                .isEqualTo(expected);
+                .isEqualTo(subj.getById(9L).get());
     }
 
     @Test
@@ -64,19 +51,8 @@ class BookDaoImplTest extends TestConfig {
     }
 
     @Test
-    void update() {
+    void shouldSuccessUpdateBook() {
         Book book = Book.builder()
-                .id(1L)
-                .name("BIG BOOK 2")
-                .genre(Genre.builder()
-                        .id(2L)
-                        .build())
-                .author(Author.builder()
-                        .id(2L)
-                        .build())
-                .build();
-
-        Book expected = Book.builder()
                 .id(1L)
                 .name("BIG BOOK 2")
                 .genre(Genre.builder()
@@ -109,12 +85,12 @@ class BookDaoImplTest extends TestConfig {
                 .get()
                 .isEqualTo(bookInDb);
 
-        subj.update(book);
+        final Book actual = subj.save(book);
 
-        assertThat(subj.getById(1L))
-                .isPresent()
-                .get()
-                .isEqualTo(expected);
+        final Optional<Book> expected = subj.getById(1L);
+
+        assertThat(actual)
+                .isEqualTo(expected.get());
     }
 
     @Test
@@ -134,7 +110,7 @@ class BookDaoImplTest extends TestConfig {
                 .build();
         assertThat(subj.getById(1L)).isPresent().get().isEqualTo(bookInDb);
 
-        subj.delete(1L);
+        subj.deleteById(1L);
 
         assertThat(subj.getById(1L)).isEmpty();
     }

@@ -45,7 +45,6 @@ class BookServiceImplTest {
                 .genreName("Genre")
                 .build();
 
-
         Book expected = Book.builder()
                 .name("book")
                 .author(author)
@@ -54,25 +53,21 @@ class BookServiceImplTest {
 
         Book book = Book.builder()
                 .name("book")
-                .author(Author.builder()
-                        .id(1L)
-                        .build())
-                .genre(Genre.builder()
-                        .id(1L)
-                        .build())
+                .author(author)
+                .genre(genre)
                 .build();
 
         when(authorDao.getById(1L)).thenReturn(Optional.of(author));
         when(genreDao.getById(1L)).thenReturn(Optional.of(genre));
-        when(bookDao.create(book)).thenReturn(Optional.of(expected));
+        when(bookDao.save(book)).thenReturn(expected);
 
         Book actual = subj.createBook("book", 1L, 1L);
 
-        assertThat(expected).isEqualTo(actual);
+        assertThat(actual).isEqualTo(expected);
 
         verify(authorDao, times(1)).getById(1L);
         verify(genreDao, times(1)).getById(1L);
-        verify(bookDao, times(1)).create(book);
+        verify(bookDao, times(1)).save(book);
 
     }
 
@@ -169,16 +164,6 @@ class BookServiceImplTest {
                 .genre(genre)
                 .build();
 
-        Book book = Book.builder()
-                .id(1L)
-                .name("book_2")
-                .author(Author.builder()
-                        .id(3L)
-                        .build())
-                .genre(Genre.builder()
-                        .id(3L)
-                        .build())
-                .build();
 
         Book expected = Book.builder()
                 .id(1L)
@@ -190,16 +175,16 @@ class BookServiceImplTest {
         when(bookDao.getById(1L)).thenReturn(Optional.of(bookFromDb));
         when(authorDao.getById(3L)).thenReturn(Optional.of(authorFromDb));
         when(genreDao.getById(3L)).thenReturn(Optional.of(genreFromDb));
-        doNothing().when(bookDao).update(expected);
+        when(bookDao.save(expected)).thenReturn(expected);
 
-        Book actual = subj.updateBook(book);
+        Book actual = subj.updateBook(expected);
 
         assertThat(expected).isEqualTo(actual);
 
         verify(bookDao, times(1)).getById(1L);
         verify(authorDao, times(1)).getById(3L);
         verify(genreDao, times(1)).getById(3L);
-        verify(bookDao, times(1)).update(expected);
+        verify(bookDao, times(1)).save(expected);
 
     }
 
@@ -237,11 +222,11 @@ class BookServiceImplTest {
 
     @Test
     void deleteBook() {
-        doNothing().when(bookDao).delete(1L);
+        doNothing().when(bookDao).deleteById(1L);
 
         subj.deleteBook(1L);
 
-        verify(bookDao, times(1)).delete(1L);
+        verify(bookDao, times(1)).deleteById(1L);
         verifyNoMoreInteractions(authorDao, genreDao);
     }
 }

@@ -8,7 +8,6 @@ import ru.otus.spring.homework.dao.genre.GenreDao;
 import ru.otus.spring.homework.domain.author.Author;
 import ru.otus.spring.homework.domain.book.Book;
 import ru.otus.spring.homework.domain.genre.Genre;
-import ru.otus.spring.homework.exception.CreationException;
 import ru.otus.spring.homework.exception.NotFoundException;
 
 import java.util.List;
@@ -31,19 +30,11 @@ public class BookServiceImpl implements BookService {
         final Genre genre = genreDao.getById(genreId)
                 .orElseThrow(() -> new NotFoundException("Genre", genreId));
 
-        return bookDao.create(Book.builder()
-                        .author(Author
-                                .builder()
-                                .id(author.id())
-                                .build())
-                        .genre(Genre
-                                .builder()
-                                .id(genre.id())
-                                .build())
+        return bookDao.save(Book.builder()
+                        .author(author)
+                        .genre(genre)
                         .name(bookName)
-                        .build())
-                .orElseThrow(() -> new CreationException("Error when creating book"));
-
+                        .build());
     }
 
     @Override
@@ -74,9 +65,7 @@ public class BookServiceImpl implements BookService {
                     bookBuilder.genre(genre);
                 });
 
-        final Book updatedBook = bookBuilder.build();
-        bookDao.update(updatedBook);
-        return updatedBook;
+        return bookDao.save(bookBuilder.build());
     }
 
     @Override
@@ -86,6 +75,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBook(final Long id) {
-        bookDao.delete(id);
+        bookDao.deleteById(id);
     }
 }
