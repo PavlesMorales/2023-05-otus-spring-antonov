@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5430/testdb
+    username: usr
+    password: pwd
+  sql:
+    init:
+      mode: always
+      data-locations: authors.sql, genres.sql, books.sql
+      schema-locations: schema.sql
