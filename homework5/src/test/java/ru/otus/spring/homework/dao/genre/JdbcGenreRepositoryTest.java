@@ -16,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
         "classpath:sql/genre/create-genre-table.sql",
         "classpath:sql/genre/genre-test-data.sql"
 })
-class GenreDaoImplTest extends TestConfig {
+class JdbcGenreRepositoryTest extends TestConfig {
 
     @Autowired
-    GenreDaoImpl subj;
+    JdbcGenreRepository subj;
 
     @Test
     void create() {

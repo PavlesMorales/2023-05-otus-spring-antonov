@@ -16,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
         "classpath:sql/author/create-author-table.sql",
         "classpath:sql/author/author-test-data.sql"
 })
-class AuthorDaoImplTest extends TestConfig {
+class JdbcAuthorRepositoryTest extends TestConfig {
 
     @Autowired
-    AuthorDaoImpl subj;
+    JdbcAuthorRepository subj;
 
     @Test
     void create() {

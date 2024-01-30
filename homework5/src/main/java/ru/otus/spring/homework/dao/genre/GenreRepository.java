@@ -5,7 +5,7 @@ import ru.otus.spring.homework.domain.genre.Genre;
 import java.util.List;
 import java.util.Optional;
 
-public interface GenreDao {
+public interface GenreRepository {
 
     Optional<Genre> create(Genre genre);
 

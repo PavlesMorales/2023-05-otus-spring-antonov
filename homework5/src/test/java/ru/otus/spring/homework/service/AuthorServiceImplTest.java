@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.spring.homework.dao.author.AuthorDao;
+import ru.otus.spring.homework.dao.author.AuthorRepository;
 import ru.otus.spring.homework.domain.author.Author;
 import ru.otus.spring.homework.exception.CreationException;
 import ru.otus.spring.homework.exception.NotFoundException;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class AuthorServiceImplTest {
 
     @Mock
-    AuthorDao authorDao;
+    AuthorRepository authorRepository;
 
     @InjectMocks
     AuthorServiceImpl subj;
@@ -38,13 +38,13 @@ class AuthorServiceImplTest {
                 .lastName("last_name")
                 .build();
 
-        when(authorDao.create(author)).thenReturn(Optional.of(expected));
+        when(authorRepository.create(author)).thenReturn(Optional.of(expected));
 
         Author actual = subj.create(author);
 
         assertThat(actual).isEqualTo(expected);
 
-        verify(authorDao, times(1)).create(author);
+        verify(authorRepository, times(1)).create(author);
 
     }
 
@@ -55,11 +55,11 @@ class AuthorServiceImplTest {
                 .lastName("last_name")
                 .build();
 
-        when(authorDao.create(author)).thenReturn(Optional.empty());
+        when(authorRepository.create(author)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> subj.create(author)).isInstanceOf(CreationException.class);
 
-        verify(authorDao, times(1)).create(author);
+        verify(authorRepository, times(1)).create(author);
 
     }
 
@@ -76,22 +76,22 @@ class AuthorServiceImplTest {
                         .lastName("last_name_2")
                         .build());
 
-        when(authorDao.getAll()).thenReturn(expected);
+        when(authorRepository.getAll()).thenReturn(expected);
 
         List<Author> actual = subj.getAll();
 
         assertThat(actual).isEqualTo(expected);
 
-        verify(authorDao, times(1)).getAll();
+        verify(authorRepository, times(1)).getAll();
     }
 
     @Test
     void shouldDeleteAuthorById() {
-        doNothing().when(authorDao).delete(1L);
+        doNothing().when(authorRepository).delete(1L);
 
         subj.delete(1L);
 
-        verify(authorDao, times(1)).delete(1L);
+        verify(authorRepository, times(1)).delete(1L);
     }
 
     @Test
@@ -102,12 +102,12 @@ class AuthorServiceImplTest {
                 .lastName("last_name")
                 .build();
 
-        when(authorDao.getById(1L)).thenReturn(Optional.of(author));
-        doNothing().when(authorDao).update(author);
+        when(authorRepository.getById(1L)).thenReturn(Optional.of(author));
+        doNothing().when(authorRepository).update(author);
 
         subj.update(author);
 
-        verify(authorDao, times(1)).update(author);
+        verify(authorRepository, times(1)).update(author);
     }
 
     @Test
@@ -118,11 +118,11 @@ class AuthorServiceImplTest {
                 .lastName("last_name")
                 .build();
 
-        when(authorDao.getById(1L)).thenReturn(Optional.empty());
+        when(authorRepository.getById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> subj.update(author)).isInstanceOf(NotFoundException.class);
 
-        verify(authorDao, times(1)).getById(1L);
+        verify(authorRepository, times(1)).getById(1L);
     }
 
     @Test
@@ -133,13 +133,13 @@ class AuthorServiceImplTest {
                 .lastName("last_name")
                 .build();
 
-        when(authorDao.getById(1L)).thenReturn(Optional.of(expected));
+        when(authorRepository.getById(1L)).thenReturn(Optional.of(expected));
 
         Author actual = subj.getById(1L);
 
         assertThat(expected).isEqualTo(actual);
 
-        verify(authorDao, times(1)).getById(1L);
+        verify(authorRepository, times(1)).getById(1L);
     }
 
     @Test
@@ -150,10 +150,10 @@ class AuthorServiceImplTest {
                 .lastName("last_name")
                 .build();
 
-        when(authorDao.getById(1L)).thenReturn(Optional.empty());
+        when(authorRepository.getById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> subj.update(author)).isInstanceOf(NotFoundException.class);
 
-        verify(authorDao, times(1)).getById(1L);
+        verify(authorRepository, times(1)).getById(1L);
     }
 }

@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
         "classpath:sql/book/create-tables.sql",
         "classpath:sql/book/book-test-data.sql"
 })
-class BookDaoImplTest extends TestConfig {
+class JdbcBookRepositoryTest extends TestConfig {
 
     @Autowired
-    BookDaoImpl subj;
+    JdbcBookRepository subj;
 
     @Test
     void shouldSuccessInsertNewBook() {

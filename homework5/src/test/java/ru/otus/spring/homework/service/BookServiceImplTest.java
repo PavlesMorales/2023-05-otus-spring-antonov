@@ -5,9 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.spring.homework.dao.author.AuthorDao;
-import ru.otus.spring.homework.dao.book.BookDao;
-import ru.otus.spring.homework.dao.genre.GenreDao;
+import ru.otus.spring.homework.dao.author.AuthorRepository;
+import ru.otus.spring.homework.dao.book.BookRepository;
+import ru.otus.spring.homework.dao.genre.GenreRepository;
 import ru.otus.spring.homework.domain.author.Author;
 import ru.otus.spring.homework.domain.book.Book;
 import ru.otus.spring.homework.domain.genre.Genre;
@@ -23,11 +23,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BookServiceImplTest {
     @Mock
-    BookDao bookDao;
+    BookRepository bookRepository;
     @Mock
-    AuthorDao authorDao;
+    AuthorRepository authorRepository;
     @Mock
-    GenreDao genreDao;
+    GenreRepository genreRepository;
 
     @InjectMocks
     BookServiceImpl subj;
@@ -57,29 +57,29 @@ class BookServiceImplTest {
                 .genre(genre)
                 .build();
 
-        when(authorDao.getById(1L)).thenReturn(Optional.of(author));
-        when(genreDao.getById(1L)).thenReturn(Optional.of(genre));
-        when(bookDao.save(book)).thenReturn(expected);
+        when(authorRepository.getById(1L)).thenReturn(Optional.of(author));
+        when(genreRepository.getById(1L)).thenReturn(Optional.of(genre));
+        when(bookRepository.save(book)).thenReturn(expected);
 
         Book actual = subj.createBook("book", 1L, 1L);
 
         assertThat(actual).isEqualTo(expected);
 
-        verify(authorDao, times(1)).getById(1L);
-        verify(genreDao, times(1)).getById(1L);
-        verify(bookDao, times(1)).save(book);
+        verify(authorRepository, times(1)).getById(1L);
+        verify(genreRepository, times(1)).getById(1L);
+        verify(bookRepository, times(1)).save(book);
 
     }
 
     @Test
     void shouldThrownNotFoundExceptionAuthor() {
-        when(authorDao.getById(1L)).thenReturn(Optional.empty());
+        when(authorRepository.getById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> subj.createBook("book", 1L, 1L))
                 .isInstanceOf(NotFoundException.class);
 
 
-        verify(authorDao, times(1)).getById(1L);
+        verify(authorRepository, times(1)).getById(1L);
 
     }
 
@@ -90,15 +90,15 @@ class BookServiceImplTest {
                 .firstName("first_name")
                 .lastName("last_name")
                 .build();
-        when(authorDao.getById(1L)).thenReturn(Optional.of(author));
-        when(genreDao.getById(1L)).thenReturn(Optional.empty());
+        when(authorRepository.getById(1L)).thenReturn(Optional.of(author));
+        when(genreRepository.getById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> subj.createBook("book", 1L, 1L))
                 .isInstanceOf(NotFoundException.class);
 
 
-        verify(authorDao, times(1)).getById(1L);
-        verify(genreDao, times(1)).getById(1L);
+        verify(authorRepository, times(1)).getById(1L);
+        verify(genreRepository, times(1)).getById(1L);
 
     }
 
@@ -122,14 +122,14 @@ class BookServiceImplTest {
                 .genre(genre)
                 .build();
 
-        when(bookDao.getById(1L)).thenReturn(Optional.of(expected));
+        when(bookRepository.getById(1L)).thenReturn(Optional.of(expected));
 
         Book actual = subj.getBook(1L);
 
         assertThat(expected).isEqualTo(actual);
 
-        verify(bookDao, times(1)).getById(1L);
-        verifyNoMoreInteractions(authorDao, genreDao);
+        verify(bookRepository, times(1)).getById(1L);
+        verifyNoMoreInteractions(authorRepository, genreRepository);
 
     }
 
@@ -172,19 +172,19 @@ class BookServiceImplTest {
                 .genre(genreFromDb)
                 .build();
 
-        when(bookDao.getById(1L)).thenReturn(Optional.of(bookFromDb));
-        when(authorDao.getById(3L)).thenReturn(Optional.of(authorFromDb));
-        when(genreDao.getById(3L)).thenReturn(Optional.of(genreFromDb));
-        when(bookDao.save(expected)).thenReturn(expected);
+        when(bookRepository.getById(1L)).thenReturn(Optional.of(bookFromDb));
+        when(authorRepository.getById(3L)).thenReturn(Optional.of(authorFromDb));
+        when(genreRepository.getById(3L)).thenReturn(Optional.of(genreFromDb));
+        when(bookRepository.save(expected)).thenReturn(expected);
 
         Book actual = subj.updateBook(expected);
 
         assertThat(expected).isEqualTo(actual);
 
-        verify(bookDao, times(1)).getById(1L);
-        verify(authorDao, times(1)).getById(3L);
-        verify(genreDao, times(1)).getById(3L);
-        verify(bookDao, times(1)).save(expected);
+        verify(bookRepository, times(1)).getById(1L);
+        verify(authorRepository, times(1)).getById(3L);
+        verify(genreRepository, times(1)).getById(3L);
+        verify(bookRepository, times(1)).save(expected);
 
     }
 
@@ -210,23 +210,23 @@ class BookServiceImplTest {
 
         List<Book> expected = List.of(book);
 
-        when(bookDao.getAll()).thenReturn(expected);
+        when(bookRepository.getAll()).thenReturn(expected);
 
         List<Book> actual = subj.getAllBook();
 
         assertThat(expected).isEqualTo(actual);
 
-        verify(bookDao, times(1)).getAll();
-        verifyNoMoreInteractions(authorDao, genreDao);
+        verify(bookRepository, times(1)).getAll();
+        verifyNoMoreInteractions(authorRepository, genreRepository);
     }
 
     @Test
     void deleteBook() {
-        doNothing().when(bookDao).deleteById(1L);
+        doNothing().when(bookRepository).deleteById(1L);
 
         subj.deleteBook(1L);
 
-        verify(bookDao, times(1)).deleteById(1L);
-        verifyNoMoreInteractions(authorDao, genreDao);
+        verify(bookRepository, times(1)).deleteById(1L);
+        verifyNoMoreInteractions(authorRepository, genreRepository);
     }
 }

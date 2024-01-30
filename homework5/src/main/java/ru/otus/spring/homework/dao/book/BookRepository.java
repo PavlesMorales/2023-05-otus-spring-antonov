@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookDao {
+public interface BookRepository {
 
     List<Book> getAll();
 

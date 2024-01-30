@@ -5,7 +5,7 @@ import ru.otus.spring.homework.domain.author.Author;
 import java.util.List;
 import java.util.Optional;
 
-public interface AuthorDao {
+public interface AuthorRepository {
     Optional<Author> create(Author author);
 
     List<Author> getAll();

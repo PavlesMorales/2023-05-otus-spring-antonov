@@ -16,7 +16,7 @@ import java.util.function.Predicate;
 
 @Repository
 @RequiredArgsConstructor
-public class GenreDaoImpl implements GenreDao {
+public class JdbcGenreRepository implements GenreRepository {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
