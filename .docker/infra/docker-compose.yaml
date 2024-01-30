@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  db:
+    image: "postgres:12"
+    container_name: db
+    ports:
+      - "5430:5432"
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=pwd
+      - POSTGRES_USER=usr
+      - POSTGRES_DB=testdb
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 200M
