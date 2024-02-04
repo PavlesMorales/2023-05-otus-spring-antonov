@@ -31,7 +31,7 @@ public class GenreCommands {
         return genreConverter.genreToString(genreService.insert(name));
     }
 
-    @ShellMethod(value = "Get genre by id command", key = "gg")
+    @ShellMethod(value = "Find genre by id command", key = "gf")
     public String getGenre(@ShellOption Long id) {
         return genreConverter.genreToString(genreService.findById(id));
     }

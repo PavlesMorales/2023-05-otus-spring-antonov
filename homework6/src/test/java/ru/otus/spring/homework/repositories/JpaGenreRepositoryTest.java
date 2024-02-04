@@ -1,12 +1,10 @@
 package ru.otus.spring.homework.repositories;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.spring.homework.models.entity.Genre;
 import ru.otus.spring.homework.repositories.impl.JpaGenreRepository;
@@ -14,7 +12,6 @@ import ru.otus.spring.homework.repositories.impl.JpaGenreRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,19 +23,15 @@ class JpaGenreRepositoryTest {
     @Autowired
     JpaGenreRepository subj;
 
-    List<Genre> dbGenres;
+    @Autowired
+    TestEntityManager testEntityManager;
 
 
-    @BeforeEach
-    void setUp() {
-        dbGenres = getDbGenres();
-    }
-
-    @ParameterizedTest
-    @MethodSource("getDbGenres")
+    @Test
     @DisplayName("должен загружать жанр по id")
-    void shouldReturnCorrectGenreById(Genre expected) {
-        final Optional<Genre> actual = subj.findById(expected.getId());
+    void shouldReturnCorrectGenreById() {
+        final Genre expected = testEntityManager.find(Genre.class, 1L);
+        final Optional<Genre> actual = subj.findById(1L);
 
         assertThat(actual)
                 .isPresent()
@@ -51,7 +44,10 @@ class JpaGenreRepositoryTest {
     @DisplayName("должен загружать список всех жанров")
     void shouldReturnCorrectGenreList() {
         final List<Genre> actualList = subj.findAll();
-        final List<Genre> expectedList = dbGenres;
+        final List<Genre> expectedList = testEntityManager.getEntityManager()
+                .createQuery("select g from Genre g", Genre.class)
+                .getResultList();
+
         assertThat(actualList)
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsExactlyElementsOf(expectedList);
@@ -69,50 +65,41 @@ class JpaGenreRepositoryTest {
                 .usingRecursiveComparison()
                 .isEqualTo(expectedGenre);
 
-        assertThat(subj.findById(savedGenre.getId()))
-                .isPresent()
-                .get()
-                .isEqualTo(savedGenre);
+        final Genre expected = testEntityManager.find(Genre.class, savedGenre.getId());
+        assertThat(savedGenre)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test
     @DisplayName("должен сохранять измененый жанр")
     void shouldSaveUpdatedGenre() {
-        final Genre expectedGenre = new Genre(1L, "Genre_999");
+        final Genre genre = new Genre(1L, "Genre_999");
+        final Genre genreFromDb = testEntityManager.find(Genre.class, genre.getId());
 
-        final Optional<Genre> genreFromDb = subj.findById(expectedGenre.getId());
         assertThat(genreFromDb)
-                .isPresent()
-                .get()
                 .usingRecursiveComparison()
-                .isNotEqualTo(expectedGenre);
+                .isNotEqualTo(genre);
 
-        final Genre savedGenre = subj.save(expectedGenre);
-        assertThat(savedGenre.getId())
+        final Genre savedGenre = subj.save(genre);
+        final Genre expected = testEntityManager.find(Genre.class, genre.getId());
+
+        assertThat(savedGenre)
                 .isNotNull()
-                .isEqualTo(expectedGenre.getId());
-
-        final Optional<Genre> updatedGenreFromBd = subj.findById(savedGenre.getId());
-        assertThat(updatedGenreFromBd)
-                .isPresent()
-                .get()
                 .usingRecursiveComparison()
-                .isEqualTo(expectedGenre);
+                .isEqualTo(expected);
+
     }
 
     @Test
     @DisplayName("должен удалять жанр по id ")
     void shouldDeleteGenreById() {
-        final Optional<Genre> existingGenre = subj.findById(1L);
-        assertThat(existingGenre).isPresent();
-        subj.remove(existingGenre.get());
-        assertThat(subj.findById(1L)).isEmpty();
-    }
+        final Genre existingGenre = testEntityManager.find(Genre.class, 1L);
+        assertThat(existingGenre).isNotNull();
 
-    private static List<Genre> getDbGenres() {
-        return IntStream.range(1, 4).boxed()
-                .map(Long::valueOf)
-                .map(id -> new Genre(id, "Genre_" + id))
-                .toList();
+        subj.remove(existingGenre);
+
+        final Genre removedGenre = testEntityManager.find(Genre.class, 1L);
+        assertThat(removedGenre).isNull();
     }
 }

@@ -1,12 +1,10 @@
 package ru.otus.spring.homework.repositories;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring.homework.models.entity.Author;
@@ -17,7 +15,6 @@ import ru.otus.spring.homework.repositories.impl.JpaBookRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,36 +26,33 @@ class JpaBookRepositoryTest {
     @Autowired
     JpaBookRepository subj;
 
-    List<Author> dbAuthors;
+    @Autowired
+    TestEntityManager testEntityManager;
 
-    List<Genre> dbGenres;
-
-    List<Book> dbBooks;
-
-    @BeforeEach
-    void setUp() {
-        dbAuthors = getDbAuthors();
-        dbGenres = getDbGenres();
-        dbBooks = getDbBooks(dbAuthors, dbGenres);
-    }
-
-    @ParameterizedTest
-    @MethodSource("getDbBooks")
+    @Test
     @DisplayName("должен загружать книгу по id")
-    void shouldReturnCorrectBookById(Book expectedBook) {
-        final Optional<Book> actualBook = subj.findById(expectedBook.getId());
+    void shouldReturnCorrectBookById() {
+        final Book expected = testEntityManager.find(Book.class, 1L);
+        final Optional<Book> actualBook = subj.findById(1L);
+
         assertThat(actualBook)
                 .isPresent()
                 .get()
                 .usingRecursiveComparison()
-                .isEqualTo(expectedBook);
+                .isEqualTo(expected);
     }
 
     @Test
     @DisplayName("должен загружать список всех книг")
     void shouldReturnCorrectBooksList() {
         final List<Book> actualBooks = subj.findAll();
-        final List<Book> expectedBooks = dbBooks;
+        final List<Book> expectedBooks = testEntityManager.getEntityManager()
+                .createQuery("""
+                        select b from Book b
+                        left join fetch b.author
+                        left join fetch b.genre
+                        """, Book.class)
+                .getResultList();
 
         assertThat(actualBooks)
                 .usingRecursiveFieldByFieldElementComparator()
@@ -68,39 +62,41 @@ class JpaBookRepositoryTest {
     @Test
     @DisplayName("должен сохранять новую книгу")
     void shouldSaveNewBook() {
-        final Book expectedBook = new Book(null, "BookTitle_10500", dbAuthors.get(0), dbGenres.get(0));
-        final Book savedBook = subj.save(expectedBook);
+        final Author author = testEntityManager.find(Author.class, 1L);
+        final Genre genre = testEntityManager.find(Genre.class, 1L);
+        final Book expectedBook = new Book(null, "BookTitle_10500", author, genre);
+        final Book actualBook = subj.save(expectedBook);
 
-        assertThat(savedBook)
+        assertThat(actualBook)
                 .isNotNull()
                 .matches(book -> Objects.nonNull(book.getId()))
                 .usingRecursiveComparison()
                 .ignoringExpectedNullFields()
                 .isEqualTo(expectedBook);
+        final Book expected = testEntityManager.find(Book.class, actualBook.getId());
 
-        assertThat(subj.findById(savedBook.getId()))
-                .isPresent()
-                .get()
-                .isEqualTo(savedBook);
+        assertThat(actualBook)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test
     @DisplayName("должен сохранять измененную книгу")
     @Transactional
     void shouldSaveUpdatedBook() {
-        final Book expectedBook = new Book(1L, "BookTitle_10500", dbAuthors.get(2), dbGenres.get(2));
+        final Author author = testEntityManager.find(Author.class, 2L);
+        final Genre genre = testEntityManager.find(Genre.class, 2L);
+        final Book book = new Book(1L, "BookTitle_10500", author, genre);
 
-        final Optional<Book> bookFromDb = subj.findById(expectedBook.getId());
-
-        assertThat(bookFromDb)
-                .isPresent()
-                .get()
+        final Book bookFromDb = testEntityManager.find(Book.class, 1L);
+        assertThat(book)
                 .usingRecursiveComparison()
-                .isNotEqualTo(expectedBook);
+                .isNotEqualTo(bookFromDb);
 
-        final Book savedBook = subj.save(expectedBook);
+        final Book actualBook = subj.save(book);
+        final Book expectedBook = testEntityManager.find(Book.class, 1L);
 
-        assertThat(savedBook)
+        assertThat(actualBook)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedBook);
     }
@@ -108,36 +104,11 @@ class JpaBookRepositoryTest {
     @Test
     @DisplayName("должен удалять книгу по id ")
     void shouldDeleteBook() {
-        final Optional<Book> existingBook = subj.findById(1L);
-        assertThat(existingBook).isPresent();
-        subj.remove(existingBook.get());
-        assertThat(subj.findById(1L)).isEmpty();
-    }
+        final Book existingBook = testEntityManager.find(Book.class, 1L);
+        assertThat(existingBook).isNotNull();
 
-    private static List<Author> getDbAuthors() {
-        return IntStream.range(1, 4).boxed()
-                .map(Long::valueOf)
-                .map(id -> new Author(id, "AuthorFirstName_" + id, "AuthorLastName_" + id))
-                .toList();
-    }
+        subj.remove(existingBook);
 
-    private static List<Genre> getDbGenres() {
-        return IntStream.range(1, 4).boxed()
-                .map(Long::valueOf)
-                .map(id -> new Genre(id, "Genre_" + id))
-                .toList();
-    }
-
-    private static List<Book> getDbBooks(List<Author> dbAuthors, List<Genre> dbGenres) {
-        return IntStream.range(1, 4).boxed()
-                .map(Long::valueOf)
-                .map(id -> new Book(id, "BookTitle_" + id, dbAuthors.get(id.intValue() - 1), dbGenres.get(id.intValue() - 1)))
-                .toList();
-    }
-
-    private static List<Book> getDbBooks() {
-        final List<Author> dbAuthors = getDbAuthors();
-        final List<Genre> dbGenres = getDbGenres();
-        return getDbBooks(dbAuthors, dbGenres);
+        assertThat(testEntityManager.find(Book.class, 1L)).isNull();
     }
 }

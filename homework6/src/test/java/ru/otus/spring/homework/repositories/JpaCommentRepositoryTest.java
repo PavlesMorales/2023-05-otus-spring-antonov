@@ -1,23 +1,18 @@
 package ru.otus.spring.homework.repositories;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import ru.otus.spring.homework.models.entity.Author;
 import ru.otus.spring.homework.models.entity.Book;
 import ru.otus.spring.homework.models.entity.Comment;
-import ru.otus.spring.homework.models.entity.Genre;
 import ru.otus.spring.homework.repositories.impl.JpaCommentRepository;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,22 +24,14 @@ class JpaCommentRepositoryTest {
     @Autowired
     JpaCommentRepository subj;
 
-    List<Comment> dbComment;
+    @Autowired
+    TestEntityManager testEntityManager;
 
-    Book dbBook;
-
-
-    @BeforeEach
-    void setUp() {
-        dbBook = getDbBook();
-        dbComment = getDbComment(dbBook);
-    }
-
-    @ParameterizedTest
-    @MethodSource("getDbComments")
+    @Test
     @DisplayName("должен загружать комментарии по id")
-    void shouldCorrectFindCommentById(Comment expected) {
-        final Optional<Comment> actual = subj.findById(expected.getId());
+    void shouldCorrectFindCommentById() {
+        final Comment expected = testEntityManager.find(Comment.class, 1L);
+        final Optional<Comment> actual = subj.findById(1L);
 
         assertThat(actual)
                 .isPresent()
@@ -57,8 +44,20 @@ class JpaCommentRepositoryTest {
     @Test
     @DisplayName("должен загружать все комментарии по id книги")
     void shouldCorrectFindAllByBookId() {
-        final List<Comment> expected = getDbComments();
-        final List<Comment> actual = subj.findAllByBookId(1L);
+        final Long bookId = 1L;
+        final List<Comment> expected = testEntityManager.getEntityManager()
+                .createQuery(
+                        """
+                                select c from Comment c
+                                    left join fetch c.book b
+                                    left join fetch b.author
+                                    left join fetch b.genre
+                                where b.id =:bookId
+                                """, Comment.class)
+                .setParameter("bookId", bookId)
+                .getResultList();
+
+        final List<Comment> actual = subj.findAllByBookId(bookId);
 
         assertThat(actual)
                 .isNotEmpty()
@@ -71,21 +70,23 @@ class JpaCommentRepositoryTest {
     @Test
     @DisplayName("должен удалять комментарий по id")
     void shouldDeleteById() {
-        final Optional<Comment> commentFromBd = subj.findById(1L);
-        assertThat(commentFromBd)
-                .isPresent();
+        final Comment existingComment = testEntityManager.find(Comment.class, 1L);
+        assertThat(existingComment)
+                .isNotNull();
 
-        subj.remove(commentFromBd.get());
+        subj.remove(existingComment);
 
-        final Optional<Comment> expected = subj.findById(1L);
-        assertThat(expected)
-                .isEmpty();
+        final Comment removedComment = testEntityManager.find(Comment.class, 1L);
+        assertThat(removedComment)
+                .isNull();
     }
 
     @Test
     @DisplayName("должен сохранять новый комментарий")
     void shouldSaveNewComment() {
-        final Comment commentNew = new Comment(null, "Comment_999", dbBook);
+        final Book book = testEntityManager.find(Book.class, 1L);
+        final Comment commentNew = new Comment(null, "Comment_999", book);
+
         final Comment savedComment = subj.save(commentNew);
 
         assertThat(savedComment)
@@ -93,9 +94,7 @@ class JpaCommentRepositoryTest {
                 .usingRecursiveComparison()
                 .isEqualTo(commentNew);
 
-        assertThat(subj.findById(savedComment.getId()))
-                .isPresent()
-                .get()
+        assertThat(testEntityManager.find(Comment.class, savedComment.getId()))
                 .usingRecursiveComparison()
                 .isEqualTo(savedComment);
 
@@ -103,43 +102,23 @@ class JpaCommentRepositoryTest {
 
 
     @Test
+    @DisplayName("должен обновлять существующий комментарий")
     void shouldUpdateComment() {
-        final Genre genre = new Genre(2L, "Genre_2");
-        final Author author = new Author(2L, "AuthorFirstName_2", "AuthorLastName_2");
-        final Book book = new Book(2L, "BookTitle_2", author, genre);
+        final Book book = testEntityManager.find(Book.class, 1L);
+        final Comment comment = new Comment(1L, "Comment_999", book);
 
-        final Comment expected = new Comment(1L, "Comment_999", book);
-        final Optional<Comment> fromDb = subj.findById(1L);
-
+        final Comment fromDb = testEntityManager.find(Comment.class, 1L);
         assertThat(fromDb)
-                .isPresent()
-                .get()
                 .usingRecursiveComparison()
-                .isNotEqualTo(fromDb);
+                .isNotEqualTo(comment);
 
-        final Comment savedComment = subj.save(expected);
+        final Comment savedComment = subj.save(comment);
+
+        final Comment expected = testEntityManager.find(Comment.class, 1L);
         assertThat(savedComment)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
 
-    }
-
-    private static List<Comment> getDbComment(Book book) {
-        return IntStream.range(1, 6).boxed()
-                .map(Long::valueOf)
-                .map(id -> new Comment(id, "Comment_" + id, book))
-                .toList();
-    }
-
-    private static Book getDbBook() {
-        final Genre genre = new Genre(1L, "Genre_1");
-        final Author author = new Author(1L, "AuthorFirstName_1", "AuthorLastName_1");
-        return new Book(1L, "BookTitle_1", author, genre);
-    }
-
-
-    private static List<Comment> getDbComments() {
-        return getDbComment(getDbBook());
     }
 }

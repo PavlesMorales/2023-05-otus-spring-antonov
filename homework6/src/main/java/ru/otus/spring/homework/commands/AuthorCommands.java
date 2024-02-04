@@ -41,7 +41,7 @@ public class AuthorCommands {
         return authorConverter.authorToString(authorService.insert(firstName, lastName));
     }
 
-    @ShellMethod(value = "Get author by id", key = "ag")
+    @ShellMethod(value = "Find author by id", key = "ag")
     public String getAuthor(@ShellOption Long id) {
         return authorConverter.authorToString(authorService.findById(id));
     }

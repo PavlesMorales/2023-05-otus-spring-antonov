@@ -1,12 +1,10 @@
 package ru.otus.spring.homework.repositories;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.spring.homework.models.entity.Author;
 import ru.otus.spring.homework.repositories.impl.JpaAuthorRepository;
@@ -14,7 +12,6 @@ import ru.otus.spring.homework.repositories.impl.JpaAuthorRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,19 +23,14 @@ class JpaAuthorRepositoryTest {
     @Autowired
     JpaAuthorRepository subj;
 
-    List<Author> dbAuthors;
+    @Autowired
+    TestEntityManager testEntityManager;
 
-
-    @BeforeEach
-    void setUp() {
-        dbAuthors = getDbAuthors();
-    }
-
-    @ParameterizedTest
-    @MethodSource("getDbAuthors")
+    @Test
     @DisplayName("должен загружать автора по id")
-    void shouldCorrectReturnById(Author expected) {
-        final Optional<Author> actual = subj.findById(expected.getId());
+    void shouldCorrectReturnById() {
+        final Author expected = testEntityManager.find(Author.class, 1L);
+        final Optional<Author> actual = subj.findById(1L);
 
         assertThat(actual)
                 .isPresent()
@@ -51,7 +43,8 @@ class JpaAuthorRepositoryTest {
     @DisplayName("должен загружать список всех авторов")
     void shouldReturnCorrectAuthorsList() {
         final List<Author> actualAuthors = subj.findAll();
-        final List<Author> expectedAuthors = dbAuthors;
+        final List<Author> expectedAuthors = testEntityManager.getEntityManager()
+                .createQuery("select a from Author a", Author.class).getResultList();
 
         assertThat(actualAuthors)
                 .usingRecursiveFieldByFieldElementComparator()
@@ -64,17 +57,13 @@ class JpaAuthorRepositoryTest {
         final Author expectedAuthor = new Author(null, "AuthorFirstName_999", "AuthorLastName_999");
         final Author savedAuthor = subj.save(expectedAuthor);
 
+        final Author expected = testEntityManager.find(Author.class, savedAuthor.getId());
         assertThat(savedAuthor)
                 .isNotNull()
                 .matches(author -> Objects.nonNull(author.getId()))
                 .usingRecursiveComparison()
                 .ignoringExpectedNullFields()
-                .isEqualTo(expectedAuthor);
-
-        assertThat(subj.findById(savedAuthor.getId()))
-                .isPresent()
-                .get()
-                .isEqualTo(savedAuthor);
+                .isEqualTo(expected);
     }
 
     @Test
@@ -82,11 +71,9 @@ class JpaAuthorRepositoryTest {
     void shouldSaveUpdatedAuthor() {
         final Author expectedAuthor = new Author(1L, "AuthorFirstName_999", "AuthorLastName_999");
 
-        final Optional<Author> authorFromBd = subj.findById(expectedAuthor.getId());
+        final Author authorFromBd = testEntityManager.find(Author.class, 1L);
 
         assertThat(authorFromBd)
-                .isPresent()
-                .get()
                 .usingRecursiveComparison()
                 .isNotEqualTo(expectedAuthor);
 
@@ -95,10 +82,8 @@ class JpaAuthorRepositoryTest {
                 .isNotNull()
                 .isEqualTo(expectedAuthor.getId());
 
-        final Optional<Author> savedAuthorFromBd = subj.findById(savedAuthor.getId());
+        final Author savedAuthorFromBd = testEntityManager.find(Author.class, 1L);
         assertThat(savedAuthorFromBd)
-                .isPresent()
-                .get()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedAuthor);
 
@@ -107,16 +92,13 @@ class JpaAuthorRepositoryTest {
     @Test
     @DisplayName("должен удалять автора по id ")
     void shouldDeleteAuthorById() {
-        final Optional<Author> existingAuthor = subj.findById(1L);
-        assertThat(existingAuthor).isPresent();
-        subj.remove(existingAuthor.get());
-        assertThat(subj.findById(1L)).isEmpty();
-    }
+        final Author authorFromBd = testEntityManager.find(Author.class, 1L);
 
-    private static List<Author> getDbAuthors() {
-        return IntStream.range(1, 4).boxed()
-                .map(Long::valueOf)
-                .map(id -> new Author(id, "AuthorFirstName_" + id, "AuthorLastName_" + id))
-                .toList();
+        assertThat(authorFromBd).isNotNull();
+        subj.remove(authorFromBd);
+
+        final Author authorFromBdAfterDelete = testEntityManager.find(Author.class, 1L);
+
+        assertThat(authorFromBdAfterDelete).isNull();
     }
 }
