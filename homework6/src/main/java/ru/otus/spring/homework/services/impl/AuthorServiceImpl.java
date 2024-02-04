@@ -7,7 +7,7 @@ import ru.otus.spring.homework.exceptions.EntityNotFoundException;
 import ru.otus.spring.homework.models.EntityToDtoConverter;
 import ru.otus.spring.homework.models.dto.AuthorDto;
 import ru.otus.spring.homework.models.entity.Author;
-import ru.otus.spring.homework.repositories.impl.JpaAuthorRepository;
+import ru.otus.spring.homework.repositories.AuthorRepository;
 import ru.otus.spring.homework.services.AuthorService;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
-    private final JpaAuthorRepository authorRepository;
+    private final AuthorRepository authorRepository;
 
     private final EntityToDtoConverter<Author, AuthorDto> converter;
 
