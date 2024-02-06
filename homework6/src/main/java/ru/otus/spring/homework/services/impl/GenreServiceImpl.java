@@ -3,10 +3,12 @@ package ru.otus.spring.homework.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.spring.homework.exceptions.EntityDeleteException;
 import ru.otus.spring.homework.exceptions.EntityNotFoundException;
 import ru.otus.spring.homework.models.EntityToDtoConverter;
 import ru.otus.spring.homework.models.dto.GenreDto;
 import ru.otus.spring.homework.models.entity.Genre;
+import ru.otus.spring.homework.repositories.BookRepository;
 import ru.otus.spring.homework.repositories.GenreRepository;
 import ru.otus.spring.homework.services.GenreService;
 
@@ -17,6 +19,8 @@ import java.util.List;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
+
+    private final BookRepository bookRepository;
 
     private final EntityToDtoConverter<Genre, GenreDto> converter;
 
@@ -37,7 +41,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public GenreDto insert(final String name) {
+    public GenreDto create(final String name) {
         final Genre genre = Genre.builder()
                 .name(name)
                 .build();
@@ -55,7 +59,12 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional
     public void deleteById(final Long id) {
-        genreRepository.remove(getGenre(id));
+        bookRepository.findFirstByGenreId(id)
+                .ifPresent(book -> {
+                    throw new EntityDeleteException("Genre id: %d has book id: %d"
+                            .formatted(id, book.getId()));
+                });
+        genreRepository.deleteById(id);
     }
 
     private Genre getGenre(Long id) {

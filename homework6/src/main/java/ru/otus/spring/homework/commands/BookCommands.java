@@ -34,7 +34,7 @@ public class BookCommands {
                          @ShellOption Long authorId,
                          @ShellOption Long genreId) {
 
-        return bookConverter.bookToString(bookService.insert(title, authorId, genreId));
+        return bookConverter.bookToString(bookService.create(title, authorId, genreId));
     }
 
     @ShellMethod(value = "Update book", key = "bu")

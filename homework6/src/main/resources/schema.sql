@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS books
 (
     id        BIGSERIAL PRIMARY KEY NOT NULL,
     title     VARCHAR(255),
-    author_id BIGSERIAL REFERENCES authors (id) on delete cascade,
-    genre_id  BIGSERIAL REFERENCES genres (id) on delete cascade
+    author_id BIGSERIAL REFERENCES authors (id),
+    genre_id  BIGSERIAL REFERENCES genres (id)
 );
 
 CREATE TABLE IF NOT EXISTS comments

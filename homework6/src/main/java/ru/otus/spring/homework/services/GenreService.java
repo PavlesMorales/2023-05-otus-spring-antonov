@@ -10,7 +10,7 @@ public interface GenreService {
 
     GenreDto findById(Long id);
 
-    GenreDto insert(String name);
+    GenreDto create(String name);
 
     GenreDto update(Long id, String name);
 

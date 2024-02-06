@@ -28,7 +28,7 @@ public class GenreCommands {
     @ShellMethod(value = "Create genre command", key = "gc")
     public String create(@ShellOption @Size(min = 2, max = 40) String name) {
 
-        return genreConverter.genreToString(genreService.insert(name));
+        return genreConverter.genreToString(genreService.create(name));
     }
 
     @ShellMethod(value = "Find genre by id command", key = "gf")

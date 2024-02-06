@@ -97,7 +97,7 @@ class JpaGenreRepositoryTest {
         final Genre existingGenre = testEntityManager.find(Genre.class, 1L);
         assertThat(existingGenre).isNotNull();
 
-        subj.remove(existingGenre);
+        subj.deleteById(1L);
 
         final Genre removedGenre = testEntityManager.find(Genre.class, 1L);
         assertThat(removedGenre).isNull();

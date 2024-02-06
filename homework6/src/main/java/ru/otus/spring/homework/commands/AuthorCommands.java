@@ -38,7 +38,7 @@ public class AuthorCommands {
     public String create(@ShellOption @Size(min = 2, max = 40) String firstName,
                          @ShellOption @Size(min = 2, max = 40) String lastName) {
 
-        return authorConverter.authorToString(authorService.insert(firstName, lastName));
+        return authorConverter.authorToString(authorService.create(firstName, lastName));
     }
 
     @ShellMethod(value = "Find author by id", key = "ag")

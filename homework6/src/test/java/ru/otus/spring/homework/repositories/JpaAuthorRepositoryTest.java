@@ -95,7 +95,7 @@ class JpaAuthorRepositoryTest {
         final Author authorFromBd = testEntityManager.find(Author.class, 1L);
 
         assertThat(authorFromBd).isNotNull();
-        subj.remove(authorFromBd);
+        subj.deleteById(1L);
 
         final Author authorFromBdAfterDelete = testEntityManager.find(Author.class, 1L);
 

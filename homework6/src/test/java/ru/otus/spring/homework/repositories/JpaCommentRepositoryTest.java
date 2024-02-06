@@ -74,7 +74,7 @@ class JpaCommentRepositoryTest {
         assertThat(existingComment)
                 .isNotNull();
 
-        subj.remove(existingComment);
+        subj.deleteById(1L);
 
         final Comment removedComment = testEntityManager.find(Comment.class, 1L);
         assertThat(removedComment)

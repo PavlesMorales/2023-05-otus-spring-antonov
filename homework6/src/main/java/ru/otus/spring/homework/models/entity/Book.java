@@ -7,13 +7,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.otus.spring.homework.models.EntityId;
 
 @Getter
 @Setter
@@ -22,7 +23,11 @@ import ru.otus.spring.homework.models.EntityId;
 @AllArgsConstructor
 @Entity
 @Table(name = "books")
-public class Book implements EntityId<Long> {
+@NamedEntityGraph(name = "book-author-genre-entity-graph", attributeNodes = {
+        @NamedAttributeNode(value = "author"),
+        @NamedAttributeNode(value = "genre")
+})
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

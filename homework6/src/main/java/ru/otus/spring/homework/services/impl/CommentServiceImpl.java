@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto insert(final String text, final Long bookId) {
+    public CommentDto create(final String text, final Long bookId) {
         final Book book = getBook(bookId);
 
         final Comment comment = Comment.builder()
@@ -54,21 +54,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto update(final Long id, final String text, final Long bookId) {
+    public CommentDto update(final Long id, final String text) {
         final Comment comment = getComment(id);
-
-        final Book book = getBook(bookId);
         comment.setText(text);
-        comment.setBook(book);
-
         return converter.convert(commentRepository.save(comment));
     }
 
     @Override
     @Transactional
     public void deleteById(final Long id) {
-        final Comment comment = getComment(id);
-        commentRepository.remove(comment);
+        commentRepository.deleteById(id);
     }
 
     private Book getBook(Long id) {

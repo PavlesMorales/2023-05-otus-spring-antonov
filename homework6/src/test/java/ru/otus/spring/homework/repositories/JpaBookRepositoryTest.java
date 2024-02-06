@@ -107,7 +107,7 @@ class JpaBookRepositoryTest {
         final Book existingBook = testEntityManager.find(Book.class, 1L);
         assertThat(existingBook).isNotNull();
 
-        subj.remove(existingBook);
+        subj.deleteById(1L);
 
         assertThat(testEntityManager.find(Book.class, 1L)).isNull();
     }

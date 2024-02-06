@@ -8,7 +8,7 @@ public interface AuthorService {
 
     List<AuthorDto> findAll();
 
-    AuthorDto insert(String firstName, String lastName);
+    AuthorDto create(String firstName, String lastName);
 
     AuthorDto update(Long id, String firstName, String lastName);
 

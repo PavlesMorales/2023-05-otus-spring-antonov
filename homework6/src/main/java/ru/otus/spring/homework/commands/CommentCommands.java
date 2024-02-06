@@ -37,15 +37,14 @@ public class CommentCommands {
     public String create(@ShellOption String text,
                          @ShellOption Long bookId) {
 
-        return commentConverter.commentToString(commentService.insert(text, bookId));
+        return commentConverter.commentToString(commentService.create(text, bookId));
     }
 
     @ShellMethod(value = "Update comment", key = "cu")
     public String update(@ShellOption Long id,
-                         @ShellOption String text,
-                         @ShellOption Long bookId) {
+                         @ShellOption String text) {
 
-        return commentConverter.commentToString(commentService.update(id, text, bookId));
+        return commentConverter.commentToString(commentService.update(id, text));
 
     }
 
