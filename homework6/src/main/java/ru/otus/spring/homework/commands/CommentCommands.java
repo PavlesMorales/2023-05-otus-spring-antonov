@@ -27,7 +27,7 @@ public class CommentCommands {
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
 
-    @ShellMethod(value = "Find comment by id", key = "cf")
+    @ShellMethod(value = "Find comment by id", key = "cg")
     public String findCommentById(@ShellOption Long id) {
 
         return commentConverter.commentToString(commentService.findById(id));

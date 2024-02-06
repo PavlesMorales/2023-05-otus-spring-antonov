@@ -36,7 +36,17 @@ public class JpaCommentRepository implements CommentRepository {
 
     @Override
     public Optional<Comment> findById(final Long id) {
-        return Optional.ofNullable(em.find(Comment.class, id));
+        EntityGraph<?> entityGraph = em.getEntityGraph("comment-book-entity-graph");
+        TypedQuery<Comment> query = em.createQuery("""
+                select c from Comment c
+                where c.id =:id
+                """, Comment.class);
+        query.setParameter("id", id);
+        query.setHint(FETCH.getKey(), entityGraph);
+        query.setMaxResults(1);
+        return query.getResultList()
+                .stream()
+                .findFirst();
     }
 
     @Override
