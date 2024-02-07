@@ -24,7 +24,7 @@ public class BookCommands {
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
 
-    @ShellMethod(value = "Find book by id", key = "bf")
+    @ShellMethod(value = "Find book by id", key = "bg")
     public String findBookById(@ShellOption Long id) {
         return bookConverter.bookToString(bookService.findById(id));
     }

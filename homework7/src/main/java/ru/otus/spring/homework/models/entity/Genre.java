@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.otus.spring.homework.models.EntityId;
 
 
 @Getter
@@ -21,7 +20,7 @@ import ru.otus.spring.homework.models.EntityId;
 @Entity
 @AllArgsConstructor
 @Table(name = "genres")
-public class Genre implements EntityId<Long> {
+public class Genre {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

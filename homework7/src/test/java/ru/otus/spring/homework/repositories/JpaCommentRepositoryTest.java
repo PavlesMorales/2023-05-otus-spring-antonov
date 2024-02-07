@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import ru.otus.spring.homework.models.entity.Comment;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,5 +43,19 @@ class JpaCommentRepositoryTest {
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsExactlyElementsOf(expected);
 
+    }
+
+    @Test
+    @DisplayName("должен загружать комментарий по id")
+    void shouldCorrectFindByBookId() {
+        final Comment expected = testEntityManager.getEntityManager()
+                .find(Comment.class, 1L);
+        final Optional<Comment> actual = subj.findById(1L);
+
+        assertThat(actual)
+                .isPresent()
+                .get()
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 }
