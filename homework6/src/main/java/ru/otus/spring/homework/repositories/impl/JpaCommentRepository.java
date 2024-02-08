@@ -1,6 +1,5 @@
 package ru.otus.spring.homework.repositories.impl;
 
-import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -13,8 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
-
 @Repository
 @RequiredArgsConstructor
 public class JpaCommentRepository implements CommentRepository {
@@ -24,25 +21,21 @@ public class JpaCommentRepository implements CommentRepository {
 
     @Override
     public List<Comment> findAllByBookId(final Long bookId) {
-        EntityGraph<?> entityGraph = em.getEntityGraph("comment-book-entity-graph");
         TypedQuery<Comment> query = em.createQuery("""
                 select c from Comment c
                 where c.book.id =:bookId
                 """, Comment.class);
         query.setParameter("bookId", bookId);
-        query.setHint(FETCH.getKey(), entityGraph);
         return query.getResultList();
     }
 
     @Override
     public Optional<Comment> findById(final Long id) {
-        EntityGraph<?> entityGraph = em.getEntityGraph("comment-book-entity-graph");
         TypedQuery<Comment> query = em.createQuery("""
                 select c from Comment c
                 where c.id =:id
                 """, Comment.class);
         query.setParameter("id", id);
-        query.setHint(FETCH.getKey(), entityGraph);
         query.setMaxResults(1);
         return query.getResultList()
                 .stream()

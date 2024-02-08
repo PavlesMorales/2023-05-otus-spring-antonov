@@ -3,13 +3,11 @@ package ru.otus.spring.homework.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.spring.homework.exceptions.EntityDeleteException;
 import ru.otus.spring.homework.exceptions.EntityNotFoundException;
 import ru.otus.spring.homework.models.EntityToDtoConverter;
 import ru.otus.spring.homework.models.dto.AuthorDto;
 import ru.otus.spring.homework.models.entity.Author;
 import ru.otus.spring.homework.repositories.AuthorRepository;
-import ru.otus.spring.homework.repositories.BookRepository;
 import ru.otus.spring.homework.services.AuthorService;
 
 import java.util.List;
@@ -19,8 +17,6 @@ import java.util.List;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
-
-    private final BookRepository bookRepository;
 
     private final EntityToDtoConverter<Author, AuthorDto> converter;
 
@@ -62,11 +58,6 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional
     public void deleteById(final Long id) {
-        bookRepository.findFirstByAuthorId(id)
-                .ifPresent(book -> {
-                    throw new EntityDeleteException("Author id: %d has book id: %d"
-                            .formatted(id, book.getId()));
-                });
         authorRepository.deleteById(id);
     }
 

@@ -14,8 +14,6 @@ public class CommentEntityToDtoConverter implements EntityToDtoConverter<Comment
         return CommentDto.builder()
                 .id(source.getId())
                 .text(source.getText())
-                .book(source.getBook().getTitle())
-                .bookId(source.getBook().getId())
                 .build();
     }
 }

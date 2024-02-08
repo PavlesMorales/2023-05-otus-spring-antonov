@@ -10,7 +10,6 @@ public class CommentConverter {
 
 
     public String commentToString(final CommentDto comment) {
-        return "Book: Id: %d. Title: %s. Id: %d, text %s"
-                .formatted(comment.getBookId(), comment.getBook(), comment.getId(), comment.getText());
+        return "Id: %d, text %s".formatted(comment.getId(), comment.getText());
     }
 }
