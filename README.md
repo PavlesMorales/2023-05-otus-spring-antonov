@@ -7,3 +7,4 @@
 - [ДЗ 5 - Создать приложение хранящее информацию о книгах в библиотеке](homework5/README.md)
 - [ДЗ 6 - Переписать приложение для хранения книг на ORM](homework6/README.md)
 - [ДЗ 7 - Библиотеку на Spring Data JPA](homework7/README.md)
+- [ДЗ 8 - Использовать MongoDB и spring-data для хранения информации о книгах](homework8/README.md)
