@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring.homework.exceptions.EntityNotFoundException;
-import ru.otus.spring.homework.models.EntityToDtoConverter;
+import ru.otus.spring.homework.models.converters.CommentEntityToDtoConverter;
 import ru.otus.spring.homework.models.dto.CommentDto;
 import ru.otus.spring.homework.models.entity.Book;
 import ru.otus.spring.homework.models.entity.Comment;
@@ -22,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final BookRepository bookRepository;
 
-    private final EntityToDtoConverter<Comment, CommentDto> converter;
+    private final CommentEntityToDtoConverter converter;
 
     @Override
     @Transactional(readOnly = true)
@@ -54,12 +54,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto update(final Long id, final String text, final Long bookId) {
+    public CommentDto update(final Long id, final String text) {
         final Comment comment = getComment(id);
-
-        final Book book = getBook(bookId);
         comment.setText(text);
-        comment.setBook(book);
 
         return converter.convert(commentRepository.save(comment));
     }

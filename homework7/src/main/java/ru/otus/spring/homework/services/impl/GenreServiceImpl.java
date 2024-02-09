@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring.homework.exceptions.EntityNotFoundException;
-import ru.otus.spring.homework.models.EntityToDtoConverter;
+import ru.otus.spring.homework.models.converters.GenreEntityToDtoConverter;
 import ru.otus.spring.homework.models.dto.GenreDto;
 import ru.otus.spring.homework.models.entity.Genre;
 import ru.otus.spring.homework.repositories.GenreRepository;
@@ -18,7 +18,7 @@ public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
 
-    private final EntityToDtoConverter<Genre, GenreDto> converter;
+    private final GenreEntityToDtoConverter converter;
 
     @Override
     @Transactional(readOnly = true)

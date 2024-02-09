@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring.homework.exceptions.EntityNotFoundException;
-import ru.otus.spring.homework.models.EntityToDtoConverter;
+import ru.otus.spring.homework.models.converters.AuthorEntityToDtoConverter;
 import ru.otus.spring.homework.models.dto.AuthorDto;
 import ru.otus.spring.homework.models.entity.Author;
 import ru.otus.spring.homework.repositories.AuthorRepository;
@@ -18,7 +18,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
-    private final EntityToDtoConverter<Author, AuthorDto> converter;
+    private final AuthorEntityToDtoConverter converter;
 
 
     @Override

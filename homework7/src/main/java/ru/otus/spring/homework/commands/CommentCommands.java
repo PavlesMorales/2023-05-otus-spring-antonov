@@ -42,10 +42,9 @@ public class CommentCommands {
 
     @ShellMethod(value = "Update comment", key = "cu")
     public String update(@ShellOption Long id,
-                         @ShellOption String text,
-                         @ShellOption Long bookId) {
+                         @ShellOption String text) {
 
-        return commentConverter.commentToString(commentService.update(id, text, bookId));
+        return commentConverter.commentToString(commentService.update(id, text));
 
     }
 

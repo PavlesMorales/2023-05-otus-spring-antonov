@@ -23,6 +23,6 @@ CREATE TABLE IF NOT EXISTS comments
 (
     id      BIGSERIAL PRIMARY KEY NOT NULL,
     text    VARCHAR(255),
-    book_id BIGSERIAL REFERENCES books (id)
+    book_id BIGSERIAL REFERENCES books (id) on delete cascade
 );
 
