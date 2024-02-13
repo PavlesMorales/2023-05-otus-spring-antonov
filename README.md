@@ -6,3 +6,4 @@
 - [ДЗ 4 - Перевести приложение для проведения опросов на Spring Shell](homework4/README.md)
 - [ДЗ 5 - Создать приложение хранящее информацию о книгах в библиотеке](homework5/README.md)
 - [ДЗ 6 - Переписать приложение для хранения книг на ORM](homework6/README.md)
+- [ДЗ 7 - Библиотеку на Spring Data JPA](homework7/README.md)
