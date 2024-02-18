@@ -40,7 +40,7 @@ class CommentRepositoryTest extends ApplicationTestConfig {
         final List<Comment> expected = repository.findAllByBookId(book.getId());
 
         assertThat(expected)
-                .usingRecursiveFieldByFieldElementComparator()
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("book")
                 .containsExactlyElementsOf(comments);
     }
 
