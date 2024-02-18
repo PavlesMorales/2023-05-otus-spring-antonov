@@ -10,7 +10,7 @@ import ru.otus.spring.homework.repositories.CommentRepository;
 
 @Component
 @RequiredArgsConstructor
-public class BookDeleteCascadeEvent extends AbstractMongoEventListener<Book> {
+public class CommentRepositoryBookDeleteCascadeEvent extends AbstractMongoEventListener<Book> {
 
     private final CommentRepository repository;
 

@@ -11,7 +11,7 @@ import ru.otus.spring.homework.repositories.BookRepository;
 
 @Component
 @RequiredArgsConstructor
-public class AuthorDeleteEvent extends AbstractMongoEventListener<Author> {
+public class BookRepositoryAuthorDeleteEvent extends AbstractMongoEventListener<Author> {
 
     private final BookRepository repository;
 
