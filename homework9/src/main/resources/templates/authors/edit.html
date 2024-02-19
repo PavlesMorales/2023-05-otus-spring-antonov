@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit person</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        h3 {
+            background-image: url("../../static/listmark.png");
+            background-repeat: no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+
+        .errors {
+            color: red;
+        }
+    </style>
+
+    <style type="text/css" th:inline="text">
+        [[h3]] {
+            background-image: url([[@{/listmark.png}]]);
+            background-repeat: no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="edit-form" action="edit.html" th:action="@{/authors/edit(id=${author.id})}" th:method="post"
+      th:object="${author}">
+    <h3 th:text="#{author-form-header}">Person Info:</h3>
+
+    <div class="row"  th:hidden="true">
+        <label for="id-input" th:text="#{id} + ':'"/>
+        <input id="id-input" type="text" readonly="readonly" name="id" th:value="*{id}" value="1"/>
+    </div>
+
+    <div class="row">
+        <label for="author-first-name-input" th:text="#{author-field-first-name} + ':'">Name:</label>
+        <input id="author-first-name-input" name="firstName" type="text" th:value="*{firstName}" value="John"/>
+        <div class="errors" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Wrong author first name error
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="author-last-name-input" th:text="#{author-field-last-name} + ':'">Last Name:</label>
+        <input id="author-last-name-input" name="lastName" type="text" th:value="*{lastName}" value="Doe"/>
+        <div class="errors" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Wrong author last name error
+        </div>
+    </div>
+
+    <div class="row">
+        <button type="submit" th:text="#{save-button-caption}">Save</button>
+        <a href="list.html" th:href="@{/authors}">
+            <button type="button" th:text="#{cancel-button-caption}">Cancel</button>
+        </a>
+    </div>
+</form>
+
+</body>
+</html>
