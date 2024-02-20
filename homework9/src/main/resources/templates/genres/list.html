@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all persons</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .persons {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .persons tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .persons td:last-child, td:first-child {
+            width: 50px;
+        }
+
+        h3 {
+            background-image: url("../../static/listmark.png");
+            background-repeat: no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+
+    </style>
+
+    <style type="text/css" th:inline="text">
+        [[h3]] {
+            background-image: url([[@{/listmark.png}]]);
+            background-repeat: no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<h3 th:text="#{genres-table-header}">Genres:</h3>
+
+<table class="genres">
+    <thead>
+    <tr>
+        <th th:text="#{id}">ID</th>
+        <th th:text="#{genre-field-name}">Name</th>
+        <th th:text="#{column-action}">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="genre : ${genres}">
+        <td th:text="${genre.id}">1</td>
+        <td th:text="${genre.name}">Type</td>
+        <td>
+            <a th:href="@{/genres/edit(id=${genre.id})}" href="edit.html" th:text="#{edit-button-caption}">Edit</a>
+            <a th:href="@{/genres/delete(id=${genre.id})}" href="delete.html" th:text="#{delete-button-caption}">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<h3>
+    <a th:text="#{genre-create-page}" href="#" th:href="@{/genres/create}"></a>
+</h3>
+
+<h3>
+    <a th:text="#{main-page}" href="#" th:href="@{/}"></a>
+</h3>
+</body>
+</html>

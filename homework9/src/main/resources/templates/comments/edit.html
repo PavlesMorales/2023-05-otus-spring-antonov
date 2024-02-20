@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit person</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        h3 {
+            background-image: url("../../static/listmark.png");
+            background-repeat: no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+
+        .errors {
+            color: red;
+        }
+    </style>
+
+    <style type="text/css" th:inline="text">
+        [[h3]] {
+            background-image: url([[@{/listmark.png}]]);
+            background-repeat: no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="edit-form" action="edit.html" th:action="@{/comments/edit(id=${comment.id})}" th:method="post" th:object="${comment}">
+    <h3 th:text="#{comment-form-header}">Comment info</h3>
+
+    <div class="row" th:hidden="true">
+        <label for="id-input" th:text="#{id} + ':'"/>
+        <input id="id-input" type="text" readonly="readonly" name="id" th:value="*{id}" value="1"/>
+    </div>
+
+    <div class="row">
+        <label for="comment-text-input" th:text="#{comments-field-text} + ':'">Text:</label>
+        <input id="comment-text-input" name="text" type="text" th:value="*{text}" value="Text..."/>
+        <div class="errors" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">Wrong text comment error
+        </div>
+    </div>
+    <div class="row" th:hidden="true">
+        <label for="comment-book-id-input" th:text="#{comments-field-text} + ':'">Text:</label>
+        <input id="comment-book-id-input" th:field="${comment.bookId}" name="firstName" type="text" th:value="*{bookId}" value="Comment"/>
+    </div>
+
+    <div class="row">
+        <button type="submit" th:text="#{save-button-caption}">Save</button>
+        <a href="list.html" th:href="@{/comments(bookId=${comment.bookId})}">
+            <button type="button" th:text="#{cancel-button-caption}">Cancel</button>
+        </a>
+    </div>
+</form>
+
+</body>
+</html>
